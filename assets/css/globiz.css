@@ -445,7 +445,7 @@ table.reducere td{font-size: 12px; text-align: center; color: #000;}
 .home-promo .element-right{width: calc(50% - 16px);box-shadow: 0px 1px 2px 1px rgba(0,0,0,0.2);}
 .home-promo .product-list img{margin-top: 21px; margin-bottom: 15px;}
 .home-promo .col-2{-ms-flex: 0 0 23.5%;flex: 0 0 23.5%;max-width: 23.5%;}
-.home-promo .col-10{-ms-flex: 0 0 76.503%;flex: 0 0 76.503%;max-width: 76.5024%;}
+.home-promo .col-10{-ms-flex: 0 0 76.5%;flex: 0 0 76.5%;max-width: 76.5%;}
 
 /*.home-promo .box{box-shadow: 0px 0px 3px #E8E7E7}*/
 .home-promo .home-pret-bomba{margin-top: 12px;margin-bottom: 7px;}
