@@ -31,7 +31,7 @@ class Marketing extends MY_Controller
 		
 		foreach ($vouchere as $v) {
 			$vinfo = $this->db->where(array('cod' => $v['cod']))->get('vouchere')->row_array();
-			if(count($vinfo)){
+			if(is_array($vinfo) and count($vinfo)){
 				$this->email->clear(TRUE);
 
 				$this->email->initialize($config);
@@ -167,7 +167,7 @@ class Marketing extends MY_Controller
 		$img_path = $_SERVER['DOCUMENT_ROOT'].'/images/';
 		foreach ($vouchere as $v) {
 			$vinfo = $this->db->where(array('cod' => $v['cod']))->get('vouchere')->row_array();
-			if(count($vinfo)){
+			if(is_array($vinfo) and count($vinfo)){
 				$this->email->clear(TRUE);
 
 				$this->email->initialize($config);
@@ -244,7 +244,7 @@ class Marketing extends MY_Controller
 			);
 		foreach ($vouchere as $v) {
 			$vinfo = $this->db->where(array('cod' => $v['cod']))->get('vouchere')->row_array();
-			if(count($vinfo)){
+			if(is_array($vinfo) and count($vinfo)){
 				$this->email->clear(TRUE);
 
 				$this->email->initialize($config);

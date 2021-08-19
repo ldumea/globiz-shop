@@ -5,6 +5,7 @@ cache
 
 media/facturi/*
 vechi/*
+old/*
 .git-old/*
 application/cache/*
 application/config/config.php

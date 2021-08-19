@@ -52,7 +52,7 @@ class Utilizator extends MY_Controller
 			$agent = $this->utilizator_db->agent(array('id' => $utilizator['id_agent']));
 		} else {
 			$agent_judet = $this->utilizator_db->agent_judet(array('judet' => $utilizator['judet']));
-			if(count($agent_judet)){
+			if(is_array($agent_judet) and count($agent_judet)){
 				//agnet alocat judetului
 				$agent = $this->utilizator_db->agent(array('id' => $agent_judet['user_id']));
 			}
@@ -146,7 +146,7 @@ class Utilizator extends MY_Controller
 				'magazin'		=> 'globiz'
 				);
 			$utilizator = $this->utilizator_db->utilizator($rec);
-			if(count($utilizator)) {
+			if(is_array($utilizator) and count($utilizator)) {
 				
 				// if($this->session->userdata('loggedFrontend'))
 				// 	$this->session->sess_destroy();
@@ -199,13 +199,13 @@ class Utilizator extends MY_Controller
 				if(is_array($cos_arr) and count($cos_arr)){
 					foreach ($cos_arr as $no => $c) {
 						$produs = $this->magazin_db->produs(array('id' => $c['id']));
-						if(count($produs)){
+						if(is_array($produs) and count($produs)){
 							//print_r($c);
 							if( isset($c['options']) and count($c['options']) ) {
 								$options = $c['options'];
 							} else {
 								$produs = $this->magazin_db->produs(array('id' => $c['id']));
-								if(count($produs)){
+								if(is_array($produs) and count($produs)){
 									$options = array('cod' => $produs['cod']);
 								} else {
 									$options = array('cod' => '');
@@ -351,12 +351,12 @@ class Utilizator extends MY_Controller
 
 			$agent = array();
 			$agent_judet = $this->utilizator_db->agent_judet(array('judet' => $utilizator['judet']));
-			if(count($agent_judet)){
+			if(is_array($agent_judet) and count($agent_judet)){
 				//agnet alocat judetului
 				$agent = $this->utilizator_db->agent(array('id' => $agent_judet['user_id']));
 			}
 			$rec_todo = array(
-				'user_id'		=> count($agent)?$agent['id']:16,
+				'user_id'		=> (is_array($agent) and count($agent))?$agent['id']:16,
 				'tert_id'		=> $tert_id,
 				'tip_id'		=> 4,
 				'tip_info'		=> $tert_id,
@@ -388,7 +388,7 @@ class Utilizator extends MY_Controller
 			'magazin'		=> 'globiz'
 		);
 		$admin = $this->utilizator_db->utilizator($rec);
-		if(!count($admin))
+		if(!(is_array($admin) and count($admin)))
 		{
 			//$this->form_validation->set_message('check_login', 'Contul nu este activat sau nu exista.');
 			$this->form_validation->set_message('check_login', 'Date de logare gresite.<br /><br />
@@ -534,7 +534,7 @@ class Utilizator extends MY_Controller
 			'tert_id' 	=> $this->session->userdata('tert_id')
 		);
 		$comanda = $this->comenzi_db->comanda($where);
-		if(!count($comanda)){redirect('utilizator/comenzi'); exit();}
+		if(!(is_array($comanda) and count($comanda))) {redirect('utilizator/comenzi'); exit();}
 		$redirect = false;
 		if(isset($_FILES['fisier_factura']) and ($_FILES['fisier_factura']['name'])){
 			$config['upload_path'] = $this->config->item('media_path').'terti/';
@@ -589,7 +589,7 @@ class Utilizator extends MY_Controller
 			'tert_id' 	=> $this->session->userdata('tert_id')
 		);
 		$comanda = $this->comenzi_db->comanda($where);
-		if(!count($comanda)){redirect('utilizator/comenzi'); exit();}
+		if(!(is_array($comanda) and count($comanda))) {redirect('utilizator/comenzi'); exit();}
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('denumire', lang('nume_firma'), 'trim');
 		$this->form_validation->set_rules('cod_fiscal', lang('cod_fiscal'), 'trim');
@@ -714,7 +714,7 @@ class Utilizator extends MY_Controller
 				break;
 		}
 		$plata = $this->comenzi_db->plata(array('cod_tranzactie' => $cod_tranzactie));
-		if(!count($plata)){
+		if(!(is_array($plata) and count($plata))) {
 			$rec = array(
 				'comanda_id'		=> $comanda_id,
 				'cod_tranzactie'	=> $cod_tranzactie,
@@ -753,7 +753,7 @@ class Utilizator extends MY_Controller
 		$tert_id = $this->session->userdata('tert_id');
 		$id = $this->uri->segment(3);
 		$adresa = $this->utilizator_db->adresa_livrare(array('id' => $id, 'tert_id' => $tert_id));
-		if(!count($adresa)){redirect('utilizator/adresa_livrare'); exit();}
+		if(!(is_array($adresa) and count($adresa))) {redirect('utilizator/adresa_livrare'); exit();}
 		
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('tara', lang('tara'), 'trim|required');
@@ -838,7 +838,7 @@ class Utilizator extends MY_Controller
 		$id = $this->input->post('id');
 		$tert_id = $this->session->userdata('tert_id');
 		$adresa = $this->utilizator_db->adresa_livrare(array('id' => $id, 'tert_id' => $tert_id));
-		if(!count($adresa)){
+		if(!(is_array($adresa) and count($adresa))) {
 			$res['type'] = 'error';
 			$res['msg'] = 'Adresa nu exista';
 		}else{
@@ -857,7 +857,7 @@ class Utilizator extends MY_Controller
 		$id = $this->input->post('id');
 		$tert_id = $this->session->userdata('tert_id');
 		$adresa = $this->utilizator_db->adresa_livrare(array('id' => $id, 'tert_id' => $tert_id));
-		if(count($adresa)){
+		if(is_array($adresa) and count($adresa)){
 			$adrese = $this->utilizator_db->adrese_livrare(array('tert_id' => $adresa['tert_id']));
 			foreach ($adrese as $adr) {
 				$this->utilizator_db->actualizeaza_adresa_livrare($adr['id'], array('implicit' => 0));
@@ -990,7 +990,7 @@ class Utilizator extends MY_Controller
 			'magazin'		=> 'globiz'
 		);
 		$admin = $this->utilizator_db->utilizator($rec);
-		if(!count($admin))
+		if(!(is_array($admin) and count($admin)))
 		{
 			$this->form_validation->set_message('check_exist', 'Ne pare rau dar contul nu exista.');
 			return FALSE;
@@ -1005,7 +1005,7 @@ class Utilizator extends MY_Controller
 				'magazin'		=> 'globiz'
 			);
 			$user = $this->utilizator_db->utilizator($rec);
-			if(count($user))
+			if(is_array($user) and count($user))
 			{
 				$salt = md5($user['id'].'carguard'.time());
 				$link = site_url('utilizator/schimbaparola/'.$salt);
@@ -1051,7 +1051,7 @@ class Utilizator extends MY_Controller
 			'magazin'		=> 'globiz'
 		);
 		$user = $this->utilizator_db->utilizator($rec);
-		if(count($user)){
+		if(is_array($user) and count($user)){
 			$this->session->sess_destroy();
 			$this->load->helper('cookie');
 			delete_cookie("LoginGlobiz");
@@ -1173,12 +1173,12 @@ class Utilizator extends MY_Controller
 					foreach ($cos_arr as $c) {
 						$produs = $this->magazin_db->produs(array('id' => $c['id']));
 						//print_r($c);
-						if(count($produs)){
+						if(is_array($produs) and count($produs)){
 							if( isset($c['options']) and count($c['options']) ) {
 								$options = $c['options'];
 							} else {
 								$produs = $this->magazin_db->produs(array('id' => $c['id']));
-								if(count($produs)){
+								if(is_array($produs) and count($produs)){
 									$options = array('cod' => $produs['cod']);
 								} else {
 									$options = array('cod' => '');
@@ -1287,7 +1287,7 @@ class Utilizator extends MY_Controller
 				$agent = array();
 				if($this->input->post('tara')=='RO'){
 					$agent_judet = $this->utilizator_db->agent_judet(array('judet' => $this->input->post('judet')));
-					if(count($agent_judet)){
+					if(is_array($agent_judet) and count($agent_judet)){
 						//agent alocat judetului
 						$agent = $this->utilizator_db->agent(array('id' => $agent_judet['user_id']));
 					}
@@ -1295,7 +1295,7 @@ class Utilizator extends MY_Controller
 					$agent = $this->utilizator_db->agent(array('id' => 16));
 				}
 				$rec_todo = array(
-					'user_id'		=> count($agent)?$agent['id']:16,
+					'user_id'		=> (is_array($agent) and count($agent))?$agent['id']:16,
 					'tert_id'		=> $tert_id,
 					'tip_id'		=> 4,
 					'tip_info'		=> $tert_id,
@@ -1316,7 +1316,7 @@ class Utilizator extends MY_Controller
 		$cui = cui($cui);
 		$sql = 'cod_fiscal LIKE "%'.$cui.'"';
 		$tert = $this->utilizator_db->tert(array(), $sql);
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 			$this->form_validation->set_message('verificare_codfiscal', lang('Codul fiscal a mai fost folosit o data.'));
 			return FALSE;
 		} else {
@@ -1397,7 +1397,7 @@ class Utilizator extends MY_Controller
 		check_logged();
 		$id = $this->uri->segment(3);
 		$garantie = $this->garantii_db->garantie(array('id' => $id, 'tert_id' => $this->session->userdata('tert_id')));
-		if(!count($garantie)){redirect('utilizator/garantii'); exit();}
+		if(!(is_array($garantie) and count($garantie))) {redirect('utilizator/garantii'); exit();}
 
 		$this->load->model('magazin_db');
 		$garantie['produs'] = $this->magazin_db->produs(array('id' => $garantie['produs_id']));
@@ -1679,7 +1679,7 @@ class Utilizator extends MY_Controller
 			'tert_id' 	=> $this->session->userdata('tert_id')
 		);
 		$factura = $this->facturi_db->factura($where);
-		if(!count($factura)){redirect('utilizator/facturi'); exit();}
+		if(!(is_array($factura) and count($factura))) {redirect('utilizator/facturi'); exit();}
 		$comanda = $this->comenzi_db->comanda(array('id' => $factura['comanda_id']));
 		$tert = $this->utilizator_db->tert(array('id' => $factura['tert_id']));
 		
@@ -1724,7 +1724,7 @@ class Utilizator extends MY_Controller
 			'tert_id' 	=> $this->session->userdata('tert_id')
 		);
 		$factura = $this->facturi_db->factura($where);
-		if(!count($factura)){redirect('utilizator/facturi'); exit();}
+		if(!(is_array($factura) and count($factura))) {redirect('utilizator/facturi'); exit();}
 
 		$comanda = $this->comenzi_db->comanda(array('id' => $factura['comanda_id']));
 		$tert = $this->utilizator_db->tert(array('id' => $factura['tert_id']));
@@ -1774,7 +1774,7 @@ class Utilizator extends MY_Controller
 		$objPHPExcel->getActiveSheet()->setCellValue('B'.$k, $factura['comanda_id']!=0?$factura['comanda_id']:'');
 		$k++;
 		$objPHPExcel->getActiveSheet()->setCellValue('A'.$k, 'Data comanda');
-		$objPHPExcel->getActiveSheet()->setCellValue('B'.$k, count($comanda)?date('d/m/Y', strtotime($comanda['data'])):'');
+		$objPHPExcel->getActiveSheet()->setCellValue('B'.$k, (is_array($comanda) and count($comanda))?date('d/m/Y', strtotime($comanda['data'])):'');
 		$k++;
 		$objPHPExcel->getActiveSheet()->setCellValue('A'.$k, 'Moneda');
 		$objPHPExcel->getActiveSheet()->setCellValue('B'.$k, $factura['moneda']);
@@ -1828,7 +1828,7 @@ class Utilizator extends MY_Controller
 	function factura_pdf(){
 		$id = $this->input->post('id');
 		$factura = $this->facturi_db->factura(array('id' => $id));
-		if(!count($factura)){redirect(site_url()); exit();}
+		if(!(is_array($factura) and count($factura))) {redirect(site_url()); exit();}
 		
 		$factura_continut = $this->facturi_db->continut(array('factura_id' => $factura['id']));
 		$comanda = $this->comenzi_db->comanda(array('id' => $factura['comanda_id']));
@@ -1837,13 +1837,13 @@ class Utilizator extends MY_Controller
 		
 		$nr_telefoane = $this->utilizator_db->telefoane(array('tert_id' => $factura['tert_id']));
 		$tel = array();
-		if(count($nr_telefoane))
+		if(is_array($nr_telefoane) and count($nr_telefoane))
 			$tel[] = $nr_telefoane[0]['telefon'];
 
-		if(count($comanda))
+		if(is_array($comanda) and count($comanda))
 		{
 			$utilizator = $this->utilizator_db->utilizator(array('id' => $comanda['tert_utilizator_id']));	
-			if(count($utilizator) and ($utilizator['telefon']!=''))
+			if(is_array($utilizator) and count($utilizator) and ($utilizator['telefon']!=''))
 			{
 				if(!in_array($utilizator['telefon'], $tel))
 					$tel[] = $utilizator['telefon'];
@@ -1857,7 +1857,7 @@ class Utilizator extends MY_Controller
 		$this->content['factura_continut'] = $factura_continut;
 		$this->content['comanda'] = $comanda;
 		$this->content['tert'] = $tert;
-		if(count($comanda))
+		if(is_array($comanda) and count($comanda))
 			$this->content['curier'] = $this->curieri_db->curier(array('id' => $comanda['curier_id']));
 			else $this->content['curier'] = array();
 		$this->content['judete'] = $this->config->item('judet');

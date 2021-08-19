@@ -26,12 +26,12 @@ class Cos extends MY_Controller
 			foreach ($cos_arr as $c) {
 				$produs = $this->magazin_db->produs(array('id' => $c['id']));
 				//print_r($c);
-				if(count($produs)){
-					if( isset($c['options']) and count($c['options']) ) {
+				if(is_array($produs) and count($produs)){
+					if( isset($c['options']) and is_array($c['options']) and count($c['options']) ) {
 						$options = $c['options'];
 					} else {
 						$produs = $this->magazin_db->produs(array('id' => $c['id']));
-						if(count($produs)){
+						if(is_array($produs) and count($produs)){
 							$options = array('cod' => $produs['cod']);
 						} else {
 							$options = array('cod' => '');
@@ -55,7 +55,7 @@ class Cos extends MY_Controller
 		$cos = array();
 		foreach($cart as $k=>$c){
 			$produs = $this->magazin_db->produs(array('id' => $c['id']));
-			if(count($produs)){
+			if(is_array($produs) and count($produs)){
 				$produs['imagine'] = $this->magazin_db->produse_imagine(array('articol_id' => $produs['id']), array('ordine' => 'asc'));
 				$cos[$k] = $c;
 				$cos[$k]['url'] = produs_url($produs);
@@ -160,7 +160,7 @@ class Cos extends MY_Controller
 				if(!(isset($c['options']['furnizor_id']) and in_array($c['options']['furnizor_id'], $this->furnizori_asociati))){
 					if(($c['id']!='voucher') and ($c['id']!='transport')){
 						$produs = $this->magazin_db->produs(array('id' => $c['id']));
-						if(count($produs)){
+						if(is_array($produs) and count($produs)){
 							$total_cos += $c['subtotal']*(100+$produs['tva'])/100;
 						} else {
 							$total_cos += $c['subtotal']*(100+$this->companie_tva)/100;
@@ -298,7 +298,7 @@ class Cos extends MY_Controller
 		$voucher = $this->magazin_db->voucher(array('cod' => $cod));
 		$return = false;
 		$msg = lang('cupon_discount_nu_exista');
-		if(count($voucher)){
+		if(is_array($voucher) and count($voucher)){
 
 			if($voucher['tip_utilizare']==1){
 				$voucher_utilizat = $this->magazin_db->voucher_utilizat(array('voucher_id' => $voucher['id']));
@@ -329,7 +329,7 @@ class Cos extends MY_Controller
 								if(!(isset($c['options']['furnizor_id']) and in_array($c['options']['furnizor_id'], $this->furnizori_asociati))){
 									if(($c['id']!='voucher') and ($c['id']!='transport')){
 										$produs = $this->magazin_db->produs(array('id' => $c['id']));
-										if(count($produs)){
+										if(is_array($produs) and count($produs)){
 											$total_cos += $c['subtotal']*(100+$produs['tva'])/100;
 										} else {
 											$total_cos += $c['subtotal']*(100+$this->companie_tva)/100;
@@ -458,7 +458,7 @@ class Cos extends MY_Controller
 			$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 			$pret_special = $this->magazin_db->pret_special(array('articol_id' => $produs['id'], 'tert_id' => $this->session->userdata('tert_id')));
 			
-			if(!count($pret_special)){
+			if(!(is_array($pret_special) and count($pret_special))) {
 				if($this->session->userdata('discount')==-1){
 					switch($this->session->userdata('tip_pret')){
 						case 2:
@@ -478,7 +478,7 @@ class Cos extends MY_Controller
 								if( in_array($produs['furnizor_id'], $this->furnizori_asociati) or !($this->session->userdata('discount')>0)){
 									if($produs['pret_intreg']<=$produs['pret_vanzare']){
 										$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $item['id']));
-										if(count($art_gr))
+										if(is_array($art_gr) and count($art_gr))
 										{
 											$prod_gr = $this->magazin_db->articole_grup(array('grup_id' => $art_gr['grup_id']));
 											$total_cantitate = 0;
@@ -495,7 +495,7 @@ class Cos extends MY_Controller
 											//calculez reducerea
 											$discount = $this->magazin_db->discount_grup(array('grup_id' => $art_gr['grup_id'], 'no_produse <= '=>$total_cantitate));
 											$discountVal = 0;
-											if(count($discount))
+											if(is_array($discount) and count($discount))
 											{
 												$discountVal = $discount['discount'];
 											}
@@ -516,7 +516,7 @@ class Cos extends MY_Controller
 											//reducere individuala
 											$discount = $this->magazin_db->plafoan_reducere_individual(array('articol_id' => $produs['id'], 'no_produse <= '=>$qty/$produs['cantitate']));
 											$discountVal = 0;
-											if(count($discount))
+											if(is_array($discount) and count($discount))
 												$discountVal = $discount['discount'];
 											$cart_item = $this->cart->find_by_id($produs['id']);
 											if($cart_item)
@@ -536,7 +536,7 @@ class Cos extends MY_Controller
 											$preturi_noi = array();
 											$discount = $this->magazin_db->plafoan_reducere_general(array('no_produse <= '=>$qty/$produs['cantitate']));
 											$discountVal = 0;
-											if(count($discount))
+											if(is_array($discount) and count($discount))
 												$discountVal = $discount['discount'];
 											$cart_item = $this->cart->find_by_id($produs['id']);
 											if($cart_item)
@@ -564,7 +564,7 @@ class Cos extends MY_Controller
 			$cos = array();
 			foreach($cart as $k=>$c){
 				$produs = $this->magazin_db->produs(array('id' => $c['id']));
-				if(count($produs)){
+				if(is_array($produs) and count($produs)){
 					$produs['imagine'] = $this->magazin_db->produse_imagine(array('articol_id' => $produs['id']), array('ordine' => 'asc'));
 					$cos[$k] = $c;
 					$cos[$k]['url'] = produs_url($produs);
@@ -573,7 +573,7 @@ class Cos extends MY_Controller
 				}
 			}
 			$this->transport();
-			if(!count($cos)){
+			if(!(is_array($cos) and count($cos))){
 				$this->sterge_voucher();
 				$this->sterge_transport();
 				$this->sterge_discount();
@@ -605,7 +605,7 @@ class Cos extends MY_Controller
 		$produs = $this->magazin_db->produs(array('id' => $id));
 		$result['res'] = 'error';
 		
-		if(count($produs))
+		if(is_array($produs) and count($produs))
 		{
 			if($cantitate%$produs['cantitate']==0)
 			{
@@ -618,7 +618,7 @@ class Cos extends MY_Controller
 					foreach ($cos_arr as $c) {
 						$_produs = $this->magazin_db->produs(array('id' => $c['id']));
 						//print_r($c);
-						if(count($_produs)){
+						if(is_array($_produs) and count($_produs)){
 							if( isset($c['options']) and count($c['options']) ) {
 								$options = $c['options'];
 							} else {
@@ -666,7 +666,7 @@ class Cos extends MY_Controller
 				
 				$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 				$pret_special = $this->magazin_db->pret_special(array('articol_id' => $produs['id'], 'tert_id' => $this->session->userdata('tert_id')));
-				if(count($pret_special)){
+				if(is_array($pret_special) and count($pret_special)){
 					$cart_item = $this->cart->find_by_id($produs['id']);
 					if($cart_item){
 						$produs = pret_produs($produs, $plafoane_reducere, true);
@@ -702,7 +702,7 @@ class Cos extends MY_Controller
 										if($produs['pret_intreg']<=$produs['pret_vanzare']) 
 										{
 											$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $id));
-											if(count($art_gr))
+											if(is_array($art_gr) and count($art_gr))
 											{
 												$produs['discount'] =  $this->magazin_db->dicounturi_grup(array('grup_id' => produsInGrup($id)));
 												foreach ($produs['discount'] as $d) {
@@ -738,7 +738,7 @@ class Cos extends MY_Controller
 										if($produs['pret_intreg']<=$produs['pret_vanzare']) 
 										{
 											$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $id));
-											if(count($art_gr))
+											if(is_array($art_gr) and count($art_gr))
 											{
 												//produs in grup
 												$prod_gr = $this->magazin_db->articole_grup(array('grup_id' => $art_gr['grup_id'])); //produse din acelasi grup
@@ -746,7 +746,7 @@ class Cos extends MY_Controller
 												$produse = array();
 												foreach ($prod_gr as $key => $pg) {
 													$prod_in_grup = $this->magazin_db->produs(array('id' => $pg['articol_id']));
-													if(count($prod_in_grup) and ($prod_in_grup['activ'] == 1))
+													if(is_array($prod_in_grup) and count($prod_in_grup) and ($prod_in_grup['activ'] == 1))
 													{
 														$produse[] = $prod_in_grup;
 													}
@@ -760,12 +760,12 @@ class Cos extends MY_Controller
 												//calculez reducerea
 												$discount = $this->magazin_db->discount_grup(array('grup_id' => $art_gr['grup_id'], 'no_produse <= '=>$total_cantitate));
 												$discountVal = 0;
-												if(count($discount))
+												if(is_array($discount) and count($discount))
 												{
 													$discountVal = $discount['discount'];
 												}
 												$preturi_noi = array();
-												if(count($produse))
+												if(is_array($produse) and count($produse))
 												{
 													foreach($produse as $k=>$p)
 													{
@@ -810,7 +810,7 @@ class Cos extends MY_Controller
 												//reducere individuala
 												$discount = $this->magazin_db->plafoan_reducere_individual(array('articol_id' => $produs['id'], 'no_produse <= '=>$cantitate/$produs['cantitate']));
 												$discountVal = 0;
-												if(count($discount))
+												if(is_array($discount) and count($discount))
 													$discountVal = $discount['discount'];
 												$cart_item = $this->cart->find_by_id($produs['id']);
 												if($cart_item)
@@ -829,7 +829,7 @@ class Cos extends MY_Controller
 												//reducere generala
 												$discount = $this->magazin_db->plafoan_reducere_general(array('no_produse <= '=>$cantitate/$produs['cantitate']));
 												$discountVal = 0;
-												if(count($discount))
+												if(is_array($discount) and count($discount))
 													$discountVal = $discount['discount'];
 												$cart_item = $this->cart->find_by_id($produs['id']);
 												if($cart_item)
@@ -875,7 +875,7 @@ class Cos extends MY_Controller
 				$discount = 0;
 				foreach($this->config->item('produse_cadou') as $pcod){
 					$produs = $this->magazin_db->produs(array('cod' => $pcod));
-					if(count($produs)){
+					if(is_array($produs) and count($produs)){
 						$cantitate = $produs['cantitate']<=0?1:$produs['cantitate'];
 						$data = array(
 							'id'      => $produs['id'],
@@ -929,11 +929,11 @@ class Cos extends MY_Controller
 	{
 		$res['no_articole'] = count($this->cart->contents());
 		$item = $this->cart->find_by_id('transport');
-		if(count($item)){
+		if(is_array($item) and count($item)){
 			$res['no_articole'] -=1;
 		}
 		$item = $this->cart->find_by_id('discount');
-		if(count($item)){
+		if(is_array($item) and count($item)){
 			$res['no_articole'] -=1;
 		}
 		$res['no_suma'] = number_format($this->cart->total(),2,",",".").' RON';
@@ -943,11 +943,11 @@ class Cos extends MY_Controller
 	{
 		$no_articole = count($this->cart->contents());
 		$item = $this->cart->find_by_id('transport');
-		if(count($item)){
+		if(is_array($item) and count($item)){
 			$no_articole -=1;
 		}
 		$item = $this->cart->find_by_id('discount');
-		if(count($item)){
+		if(is_array($item) and count($item)){
 			$no_articole -=1;
 		} 
 		$ret = array(
@@ -971,7 +971,7 @@ class Cos extends MY_Controller
 		$this->cart->update($data);
 		if(!$this->config->item('blackfriday')) {
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $item['id']));
-			if(count($art_gr))
+			if(is_array($art_gr) and count($art_gr))
 			{
 				$prod_gr = $this->magazin_db->articole_grup(array('grup_id' => $art_gr['grup_id']));
 				$total_cantitate = 0;
@@ -985,7 +985,7 @@ class Cos extends MY_Controller
 				//calculez reducerea
 				$discount = $this->magazin_db->discount_grup(array('grup_id' => $art_gr['grup_id'], 'no_produse <= '=>$total_cantitate));
 				$discountVal = 0;
-				if(count($discount))
+				if(is_array($discount) and count($discount))
 				{
 					$discountVal = $discount['discount'];
 				}
@@ -1012,7 +1012,7 @@ class Cos extends MY_Controller
 		$cos = array();
 		foreach($cart as $k=>$c){
 			$produs = $this->magazin_db->produs(array('id' => $c['id']));
-			if(count($produs)){
+			if(is_array($produs) and count($produs)){
 				$produs['imagine'] = $this->magazin_db->produse_imagine(array('articol_id' => $produs['id']), array('ordine' => 'asc'));
 				$cos[$k] = $c;
 				$cos[$k]['url'] = produs_url($produs);
@@ -1020,7 +1020,7 @@ class Cos extends MY_Controller
 				$cos[$k]['tva'] = $this->session->userdata('valoare_tva')==0?0:$produs['tva'];
 			}
 		}
-		if(!count($cos)){
+		if(!(is_array($cos) and count($cos))) {
 			$this->sterge_voucher();
 			$this->sterge_transport();
 			$this->sterge_discount();
@@ -1041,7 +1041,7 @@ class Cos extends MY_Controller
 	{
 		check_logged();
 		$cos = $this->cart->contents();
-		if(!count($cos)){redirect(site_url()); exit();}
+		if(!(is_array($cos) and count($cos))) {redirect(site_url()); exit();}
 		$valoare_tva = $this->session->userdata('valoare_tva');
 		if((string)$valoare_tva == ''){
 			$valoare_tva = $this->companie_tva;
@@ -1049,7 +1049,7 @@ class Cos extends MY_Controller
 		$total = 0;
 		foreach($cos as $k=>$c){
 			$produs = $this->magazin_db->produs(array('id' => $c['id']));
-			if(count($produs)){
+			if(is_array($produs) and count($produs)){
 				if(isset($c['options']['info']) and ($c['options']['info'] == 'voucher')){
 					$produs['tva'] = $valoare_tva;
 					$voucher = $c['options']['cod'];
@@ -1124,7 +1124,7 @@ class Cos extends MY_Controller
 			$tert = $this->utilizator_db->tert(array('id' => $this->session->userdata('tert_id')));
 			$magazin_companie = $this->companii_db->magazin_companie(array('magazin' => $tert['magazin']));
 			$companie_id = 1;
-			if(count($magazin_companie)){
+			if(is_array($magazin_companie) and count($magazin_companie)){
 				$companie_id = $magazin_companie['companie_id'];
 			}
 			switch($tert['modplata_id'])
@@ -1151,7 +1151,7 @@ class Cos extends MY_Controller
 				if($this->config->item('adauga_catalog')==1){
 					if($adresa_livrare['catalog'] == 0){
 						$produs = $this->magazin_db->produs(array('cod' => '623.01'));
-						if(count($produs)){
+						if(is_array($produs) and count($produs)){
 							$adauga_catalog = 1;
 							$data_cos = array(
 								'id'      => $produs['id'],
@@ -1187,7 +1187,7 @@ class Cos extends MY_Controller
 			
 			foreach($cos as $k=>$c){
 				$produs = $this->magazin_db->produs(array('id' => $c['id']));
-				if(count($produs)){
+				if(is_array($produs) and count($produs)){
 					if(!(isset($c['options']['info']) and ($c['options']['info']=='voucher'))){
 						if(in_array($produs['furnizor_id'], $this->furnizori_asociati)){ // in functie de id_furnizor pentru produs creez una sau mai multe comenzi
 							$furnizor_id = $produs['furnizor_id'];
@@ -1397,7 +1397,7 @@ class Cos extends MY_Controller
 				$cod = $discount_produse_cadou['options']['cod'];
 				$produs = $this->magazin_db->produs(array('cod' => $cod));
 				$_produs_discount = $this->magazin_db->produs(array('id' => $_produs_id));
-				if(count($_produs_discount)){
+				if(is_array($_produs_discount) and count($_produs_discount)){
 					$_val_tva_pd = $_produs_discount['tva'];
 					$id_prod = $_produs_discount['id'];
 				} else {
@@ -1433,7 +1433,7 @@ class Cos extends MY_Controller
 			} else {
 				if($tert['tara'] == 'RO'){
 					$agent_judet = $this->utilizator_db->agent_judet(array('judet' => $utilizator['judet']));
-					if(count($agent_judet)){
+					if(is_array($agent_judet) and count($agent_judet)){
 						//agnet alocat judetului
 						$agent = $this->utilizator_db->agent(array('id' => $agent_judet['user_id']));
 					}
@@ -1611,7 +1611,7 @@ class Cos extends MY_Controller
 		$id = $this->input->post('id');
 		$cantitate = $this->input->post('cantitate');
 		$produs = $this->magazin_db->produs(array('id' => $id));
-		if(count($produs))
+		if(is_array($produs) and count($produs))
 		{
 			if($cantitate%$produs['cantitate']==0)
 			{
@@ -1712,7 +1712,7 @@ class Cos extends MY_Controller
 		$cos = array();
 		foreach($cart as $k=>$c){
 			$produs = $this->magazin_db->produs(array('id' => $c['id']));
-			if(count($produs)){
+			if(is_array($produs) and count($produs)){
 				$produs['imagine'] = $this->magazin_db->produse_imagine(array('articol_id' => $produs['id']), array('ordine' => 'asc'));
 				$cos[$k] = $c;
 				$cos[$k]['url'] = produs_url($produs);

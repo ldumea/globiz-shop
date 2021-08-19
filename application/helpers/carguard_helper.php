@@ -36,7 +36,7 @@ function meniu_stanga($id_parinte = 0, $nivel = 0, $show_image = true, $id_sub_m
 	$ci =& get_instance();
 	$meniu = '';
 	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $id_parinte, 'afisata' => 1), array('ordine' => 'asc'));
-	if(count($categorii))
+	if(is_array($categorii) and count($categorii))
 	{
 		if ($nivel == 0)
 		{
@@ -150,7 +150,7 @@ function meniu_stanga_old($id_parinte = 0)
 	$ci =& get_instance();
 	$meniu = '';
 	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $id_parinte), array('ordine' => 'asc'));
-	if(count($categorii))
+	if(is_array($categorii) and count($categorii))
 	{
 		$meniu = '<ul id="nice-menu-1" class="nice-menu nice-menu-right nice-menu-menu-categorii nice-menus-processed sf-js-enabled">';
 		foreach ($categorii as $key => $c) {
@@ -178,7 +178,7 @@ function categorie_tree($id, $lastId){
 	$categorie = $ci->magazin_db->categorie(array('id' => $id));
 	$array = array();
 	
-	if(count($categorie))
+	if(is_array($categorie) and count($categorie))
 	{
 		//$nume.= categorie_tree($categorie['id_parinte']).' :: '.$categorie['nume'];
 		//$nume = categorie_tree($categorie['id_parinte']);
@@ -202,7 +202,7 @@ function categorie_tree($id, $lastId){
 function produsInGrup($id){
 	$ci =& get_instance();
 	$art = $ci->magazin_db->articol_grup(array('articol_id' => $id));
-	if(count($art))
+	if(is_array($art) and count($art))
 		return $art['grup_id'];
 		else return 0;
 }
@@ -294,13 +294,13 @@ function pret_mic($produs, $curs=1){
 		$pret_mic = $produs['pret_vanzare'];
 	} else {
 		$grup_articol = $ci->magazin_db->articol_grup(array('articol_id' => $produs['id']));
-		if(count($grup_articol)){
+		if(is_array($grup_articol) and count($grup_articol)){
 			//produsul face parte dintr-un grup
 			$plafon = $ci->magazin_db->discount_grup(array('grup_id' => $grup_articol['grup_id']));
 			$discount = $plafon['discount'];
 		} else {
 			$plafon_articol = $ci->magazin_db->plafoan_reducere_individual(array('articol_id' => $produs['id']));
-			if(count($plafon_articol)){
+			if(is_array($plafon_articol) and count($plafon_articol)){
 				//produsul are plafoane individuale
 				$discount = $plafon_articol['discount'];
 			} else {
@@ -325,13 +325,13 @@ function pret_mic_materom($tert, $produs, $curs=1){
 		$pret_mic = $produs['pret_vanzare'];
 	} else {
 		$grup_articol = $ci->magazin_db->articol_grup(array('articol_id' => $produs['id']));
-		if(count($grup_articol)){
+		if(is_array($grup_articol) and count($grup_articol)){
 			//produsul face parte dintr-un grup
 			$plafon = $ci->magazin_db->discount_grup(array('grup_id' => $grup_articol['grup_id']));
 			$discount = $plafon['discount'];
 		} else {
 			$plafon_articol = $ci->magazin_db->plafoan_reducere_individual(array('articol_id' => $produs['id']));
-			if(count($plafon_articol)){
+			if(is_array($plafon_articol) and count($plafon_articol)){
 				//produsul are plafoane individuale
 				$discount = $plafon_articol['discount'];
 			} else {
@@ -389,7 +389,7 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 	}
 	$discountVal = 0;
 	$maxDiscount = 0;
-	if(count($pret)){
+	if(is_array($pret) and count($pret)){
 		$produs['pret_intreg'] = $produs['pret_vanzare'];
 		$produs['pret_vanzare'] = $pret['pret'];
 		$produs['pret_vanzare_tva'] = $produs['pret_vanzare']*(100+$produs['tva'])/100;
@@ -429,7 +429,7 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 						break;
 					case 3: //pret mic
 						$art_gr = $ci->magazin_db->articol_grup(array('articol_id' => $produs['id']));
-						if(count($art_gr))
+						if(is_array($art_gr) and count($art_gr))
 						{
 							$produs['discount'] =  $ci->magazin_db->dicounturi_grup(array('grup_id' => produsInGrup($produs['id'])));
 						} elseif(count($plafon = reduceriProdus($produs['id']))) {
@@ -438,7 +438,7 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 							//reduceri generale
 							$produs['discount'] = $plafoane_reducere;
 						}
-						if(count($produs['discount'])>0){
+						if(is_array($produs['discount']) and count($produs['discount'])>0){
 							if(isset($produs['discount'][count($produs['discount'])-1]['discount'])){
 								$produs['pret_intreg'] = $produs['pret_vanzare'];
 								$produs['pret_vanzare'] = $produs['pret_vanzare']*(100-$produs['discount'][count($produs['discount'])-1]['discount'])/100;
@@ -448,7 +448,7 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 						break;
 					case 2: //pret mediu
 						$art_gr = $ci->magazin_db->articol_grup(array('articol_id' => $produs['id']));
-						if(count($art_gr))
+						if(is_array($art_gr) and count($art_gr))
 						{
 							$produs['discount'] =  $ci->magazin_db->dicounturi_grup(array('grup_id' => produsInGrup($produs['id'])));
 						} elseif(count($plafon = reduceriProdus($produs['id']))) {
@@ -457,7 +457,7 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 							//reduceri generale
 							$produs['discount'] = $plafoane_reducere;
 						}
-						if(count($produs['discount'])>0){
+						if(is_array($produs['discount']) and count($produs['discount'])>0){
 							if(isset($produs['discount'][round(count($produs['discount'])/2-1)]['discount'])){
 								$produs['pret_intreg'] = $produs['pret_vanzare'];
 								$produs['pret_vanzare'] = $produs['pret_vanzare']*(100-$produs['discount'][round(count($produs['discount'])/2-1)]['discount'])/100;
@@ -467,13 +467,13 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 						break;
 					default:
 						$art_gr = $ci->magazin_db->articol_grup(array('articol_id' => $produs['id']));
-						if(count($art_gr))
+						if(is_array($art_gr) and count($art_gr))
 						{
 							//produs in grup
 							if(isset($grupuri[$art_gr['grup_id']]))
 							{
 								$discount = $ci->magazin_db->discount_grup(array('grup_id' => $art_gr['grup_id'], 'no_produse <= '=>$grupuri[$art_gr['grup_id']]['no_produse']));
-								if(count($discount))
+								if(is_array($discount) and count($discount))
 								{
 									$discountVal = $discount['discount'];
 								}
@@ -486,10 +486,10 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 						} elseif(count($plafon = reduceriProdus($produs['id']))) {
 							$produs['discount'] = $plafon;
 							$cart_item = $ci->cart->find_by_id($produs['id']);
-							if(count($cart_item))
+							if(is_array($cart_item) and count($cart_item))
 							{
 								$discount = $ci->magazin_db->plafoan_reducere_individual(array('articol_id' => $produs['id'], 'no_produse <= '=>$cart_item['qty']/$produs['cantitate']));
-								if(count($discount))
+								if(is_array($discount) and count($discount))
 									$discountVal = $discount['discount'];
 							}
 							foreach ($produs['discount'] as $d) {
@@ -500,10 +500,10 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 							//reduceri generale
 							$produs['discount'] = $plafoane_reducere;
 							$cart_item = $ci->cart->find_by_id($produs['id']);
-							if(count($cart_item))
+							if(is_array($cart_item) and count($cart_item))
 							{
 								$discount = $ci->magazin_db->plafoan_reducere_general(array('no_produse <= '=>$cart_item['qty']/$produs['cantitate']));
-								if(count($discount))
+								if(is_array($discount) and count($discount))
 									$discountVal = $discount['discount'];
 							}
 							foreach ($produs['discount'] as $d) {
@@ -527,7 +527,7 @@ function copiere_comanda($id){
 	
 	$comanda = $ci->comenzi_db->comanda(array('id' => $id));
 	$comanda_originala = $ci->comenzi_db->comanda_originala(array('id' => $id));
-	if(count($comanda_originala)){
+	if(is_array($comanda_originala) and count($comanda_originala)){
 		$ci->comenzi_db->actualizeaza_originala($id, $comanda);
 	} else {
 		$ci->comenzi_db->adauga_originala($comanda);
@@ -554,7 +554,7 @@ function discount_negociat(){
 		if(!(isset($c['options']['furnizor_id']) and in_array($c['options']['furnizor_id'], $ci->furnizori_asociati))){
 			if(($c['id']!='voucher') or ($c['id']!='transport')){
 				$produs = $ci->magazin_db->produs(array('id' => $c['id']));
-				if(count($produs)){
+				if(is_array($produs) and count($produs)){
 					$total_cos += $c['subtotal']*(100+$produs['tva'])/100;
 				}
 			}
@@ -575,7 +575,7 @@ function discount_negociat(){
 			$discount['tva'] = $ci->companie_tva;
 		} else {
 			//adauga
-			if(count($cos)){
+			if(is_array($cos) and count($cos)){
 				$discount_valoare = $ci->session->userdata('discount');
 				if($discount_valoare>0){
 					$discount_total = $total_cos*$discount_valoare/100;

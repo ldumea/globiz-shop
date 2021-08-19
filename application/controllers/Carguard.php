@@ -79,7 +79,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$produse_promo[$k]['imagine'] = $imagine;
-			$produse_promo[$k]['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$produse_promo[$k]['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 		}
 
 		$where = array('pret_bomba' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
@@ -147,7 +147,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$produse_bomba[$k]['imagine'] = $imagine;
-			$produse_bomba[$k]['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$produse_bomba[$k]['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 		}
 		
 		$where = array('nou_homepage' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
@@ -216,7 +216,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$produse_noutati[$k]['imagine'] = $imagine;
-			$produse_noutati[$k]['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$produse_noutati[$k]['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 		}
 		
 		$where = array('recomandate' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
@@ -284,7 +284,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 		}
 		
 		$where = array('lichidari' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
@@ -352,7 +352,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 		}
 		
 		$cat_id = categorie_parinte();
@@ -396,7 +396,7 @@ class Carguard extends MY_Controller
 		$id = $this->uri->rsegment(3);
 		$this->session->set_userdata('categorie_id', $id);
 		$categorie = $this->magazin_db->categorie(array('id' => $id));
-		if(!count($categorie)){
+		if(!(is_array($categorie) and count($categorie))) {
 			redirect(site_url(),'location',301); exit();
 		}
 		//if($categorie['id_parinte'] != $this->config->item('shop_id')){
@@ -406,7 +406,6 @@ class Carguard extends MY_Controller
 		if($categorie['id_parinte'] != $this->config->item('shop_id')){
 			$this->categorie_subcategorii($id);
 		} else {
-
 			$where_arr = array('articole_categorii.categorie_id' => $id, 'articole.activ' => 1, 'articole.afisare_globiz' => 1);
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 
@@ -421,13 +420,13 @@ class Carguard extends MY_Controller
 					// }
 				}
 			}
-			if(count($sql_atribute)){
+			if(is_array($sql_atribute) and count($sql_atribute)){
 				$sql_atribute =  implode(" AND ", $sql_atribute);
 				$sql.=" AND ".$sql_atribute;
 			}
 
 			$produse = $this->magazin_db->produse_categorie($where_arr, array('ordine' => 'asc', 'produs_precomandabil' => 'asc', 'articole.cod' => 'asc'), array('per_page'=> $this->per_page, 'no'=>0), $sql);
-			// echo $this->db->last_query();exit();
+			//echo $this->db->last_query();
 			$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 			
 			$cos = $this->cart->contents();
@@ -435,7 +434,7 @@ class Carguard extends MY_Controller
 			foreach($cos as $k=>$c){
 				//$produs = $this->magazin_db->produs(array('id' => $c['id']));
 				$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $c['id']));
-				if(count($art_gr))
+				if(is_array($art_gr) and count($art_gr))
 				{
 					if(isset($grupuri[$art_gr['grup_id']]['no_produse']))
 						$grupuri[$art_gr['grup_id']]['no_produse'] += $c['qty'];
@@ -516,7 +515,7 @@ class Carguard extends MY_Controller
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 				$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 				$p['imagine'] = $imagine;
-				$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+				$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 				//$produse[$k]['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;
 			}
 			//print_r($filtre);
@@ -525,12 +524,12 @@ class Carguard extends MY_Controller
 			//$this->content['subcategorii'] = $this->magazin_db->categorii(array('id_parinte' => $id), array('ordine' => 'asc'));
 			
 			$path = explode("-",$categorie['path']);
-			if(count($path)>1)
+			if(is_array($path) and count($path)>1)
 				$id_meniu = $path[1];
 				else $id_meniu = $categorie['id'];
-			if(count($path)>2)
+			if(is_array($path) and count($path)>2)
 				$id_sub_meniu = $path[2];
-			elseif(count($path)==2)
+			elseif(is_array($path) and count($path)==2)
 				$id_sub_meniu = $categorie['id'];
 			else
 				$id_sub_meniu = '';
@@ -567,7 +566,7 @@ class Carguard extends MY_Controller
 				// }
 			}
 		}
-		if(count($sql_atribute)){
+		if(is_array($sql_atribute) and count($sql_atribute)){
 			$sql_atribute =  implode(" AND ", $sql_atribute);
 			$sql.=" AND ".$sql_atribute;
 		}
@@ -581,7 +580,7 @@ class Carguard extends MY_Controller
 		foreach($cos as $k=>$c){
 			//$produs = $this->magazin_db->produs(array('id' => $c['id']));
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $c['id']));
-			if(count($art_gr))
+			if(is_array($art_gr) and count($art_gr))
 			{
 				if(isset($grupuri[$art_gr['grup_id']]['no_produse']))
 					$grupuri[$art_gr['grup_id']]['no_produse'] += $c['qty'];
@@ -658,7 +657,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 			//$produse[$k]['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;	
 		}
 		$this->content['categorie'] = $categorie;
@@ -669,10 +668,6 @@ class Carguard extends MY_Controller
 	
 	function categorie_subcategorii($id){
 		$categorie = $this->magazin_db->categorie(array('id' => $id));
-		// $subcategorii = $this->magazin_db->categorii(array('id_parinte' => $categorie['id'], 'afisata' => 1), array('ordine' => 'asc'));
-		// if(!count($subcategorii)){
-		// 	$subcategorii = $this->magazin_db->categorii(array('id' => $categorie['id'], 'afisata' => 1), array('ordine' => 'asc'));
-		// }
 		$path = explode("-",$categorie['path']);
 		if(is_array($path) and count($path)>1)
 			$id_meniu = $path[1];
@@ -692,7 +687,6 @@ class Carguard extends MY_Controller
 			}
 		}
 
-
 		$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 		foreach($subcategorii as &$s){
 			$where_arr = array('articole_categorii.categorie_id' => $s['id'], 'articole.activ' => 1, 'articole.afisare_globiz' => 1);
@@ -701,7 +695,7 @@ class Carguard extends MY_Controller
 			
 			$produse = $this->magazin_db->produse_categorie($where_arr, array('ordine' => 'asc', 'produs_precomandabil' => 'asc', 'articole.cod' => 'asc'), array(), $sql);
 			// if($s['id'] == 807){
-				// echo $this->db->last_query();
+			// 	echo $this->db->last_query();
 			// }
 			foreach ($produse as $k => &$p) {
 				$p['cantitate'] = $p['cantitate']==0?1:$p['cantitate'];
@@ -772,22 +766,13 @@ class Carguard extends MY_Controller
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 				$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 				$p['imagine'] = $imagine;
-				$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+				$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 				//$p['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;
 			}
 			$s['produse'] = $produse;
 		}
 		
-		// $path = explode("-",$categorie['path']);
-		// if(count($path)>1)
-		// 	$id_meniu = $path[1];
-		// 	else $id_meniu = $categorie['id'];
-		// if(count($path)>2)
-		// 	$id_sub_meniu = $path[2];
-		// elseif(count($path)==2)
-		// 	$id_sub_meniu = $categorie['id'];
-		// else
-		// 	$id_sub_meniu = '';
+		
 		$this->content['id_meniu'] = $id_meniu;
 		$this->content['id_sub_meniu'] = $id_sub_meniu;
 		$this->content['id_parinte'] = $categorie['id_parinte'];
@@ -801,7 +786,7 @@ class Carguard extends MY_Controller
 	{
 		$id = $this->uri->rsegment(3);
 		$produs = $this->magazin_db->produs(array('id' => $id, 'magazin_id' => $this->config->item('shop_id')));
-		if(!count($produs)){
+		if(!(is_array($produs) and count($produs))) {
 			redirect(site_url(),'location',301);
 		}
 		//$stocuri = $this->magazin_db->produs_locatii(array('articol_id' => $produs['id']));
@@ -844,7 +829,7 @@ class Carguard extends MY_Controller
 		foreach($cos as $k=>$c){
 			//$produs = $this->magazin_db->produs(array('id' => $c['id']));
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $c['id']));
-			if(count($art_gr))
+			if(is_array($art_gr) and count($art_gr))
 			{
 				if(isset($grupuri[$art_gr['grup_id']]['no_produse']))
 					$grupuri[$art_gr['grup_id']]['no_produse'] += $c['qty'];
@@ -917,7 +902,7 @@ class Carguard extends MY_Controller
 		{
 			$categorie = $this->magazin_db->categorie(array('id' => $categorie_id));
 			$path = explode("-",$categorie['path']);
-			if(count($path)>1)
+			if(is_array($path) and count($path)>1)
 				$id_meniu = $path[1];
 				else $id_meniu = $categorie['id'];
 			$this->content['id_meniu'] = $id_meniu;
@@ -930,7 +915,7 @@ class Carguard extends MY_Controller
 		$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor >0 ))';
 		//$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 		$articole_comp = $this->magazin_db->articole_complementare($where, $sql, array('rand()' => 'rand()'), array('per_page' => 5, 'no' => 0));
-		if(count($articole_comp)<5){
+		if(is_array($articole_comp) and count($articole_comp)<5){
 			if($produs['categorie_complementara']!=0){
 				$_cat_comp_id = $produs['categorie_complementara'];
 			} else {
@@ -938,7 +923,7 @@ class Carguard extends MY_Controller
 				$categorie = $this->magazin_db->categorie(array('id' => $produs['categorie_id']));
 				if(isset($categorie['path'])){
 					$_path = explode("-", $categorie['path']);
-					if(count($_path)>=3){
+					if(is_array($_path) and count($_path)>=3){
 						$_cat_comp_id = $_path[2];
 					}
 				}
@@ -950,7 +935,7 @@ class Carguard extends MY_Controller
 			foreach($articole_comp as $p){
 				$_ids[] = $p['id'];
 			}
-			if(count($_ids))
+			if(is_array($_ids) and count($_ids))
 				$sql.=" AND articole.id NOT IN (".implode(", ", $_ids).")";
 			$_produse = $this->magazin_db->produse_categorie($where_arr, array('articole.id' => 'random'), array('per_page'=> 5-count($articole_comp), 'no'=>0), $sql);
 			$articole_comp = array_merge($articole_comp,$_produse);
@@ -1025,7 +1010,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 		}
 		//print_r($articole_comp);exit;
 		
@@ -1067,7 +1052,7 @@ class Carguard extends MY_Controller
 		foreach($cos as $k=>$c){
 			//$produs = $this->magazin_db->produs(array('id' => $c['id']));
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $c['id']));
-			if(count($art_gr))
+			if(is_array($art_gr) and count($art_gr))
 			{
 				if(isset($grupuri[$art_gr['grup_id']]['no_produse']))
 					$grupuri[$art_gr['grup_id']]['no_produse'] += $c['qty'];
@@ -1175,9 +1160,8 @@ class Carguard extends MY_Controller
 			//$p['maxDiscount'] = $maxDiscount;
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
-			// echo $this->db->last_query();
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 			//$produse[$k]['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;
 		}
 		$this->content['produse'] = $produse;
@@ -1219,7 +1203,7 @@ class Carguard extends MY_Controller
 		foreach($cos as $k=>$c){
 			//$produs = $this->magazin_db->produs(array('id' => $c['id']));
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $c['id']));
-			if(count($art_gr))
+			if(is_array($art_gr) and count($art_gr))
 			{
 				if(isset($grupuri[$art_gr['grup_id']]['no_produse']))
 					$grupuri[$art_gr['grup_id']]['no_produse'] += $c['qty'];
@@ -1306,7 +1290,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 			//$p['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;
 		}
 		//$s['produse'] = $produse;
@@ -1361,7 +1345,7 @@ class Carguard extends MY_Controller
 		foreach($cos as $k=>$c){
 			//$produs = $this->magazin_db->produs(array('id' => $c['id']));
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $c['id']));
-			if(count($art_gr))
+			if(is_array($art_gr) and count($art_gr))
 			{
 				if(isset($grupuri[$art_gr['grup_id']]['no_produse']))
 					$grupuri[$art_gr['grup_id']]['no_produse'] += $c['qty'];
@@ -1447,7 +1431,7 @@ class Carguard extends MY_Controller
 			$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
 			$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
 			$p['imagine'] = $imagine;
-			$p['imagine2'] = count($imagine2)?$imagine2:$imagine;
+			$p['imagine2'] = (is_array($imagine2) and count($imagine2))?$imagine2:$imagine;
 			//$p['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;
 		}
 		$this->content['produse'] = $produse;

@@ -24,7 +24,7 @@ class Feed extends MY_Controller
 		$feed_hash = $this->uri->segment(4);
 
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
 			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
 			// echo $this->db->last_query();exit();
@@ -33,7 +33,7 @@ class Feed extends MY_Controller
 			foreach ($articole as $key => $art) {
 				$img = '';
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				if(count($imagine))
+				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 					
 				$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $art['id']), array('ordine' => 'asc'));
@@ -47,7 +47,7 @@ class Feed extends MY_Controller
 				$path = array();
 				foreach ($categorii as $c){
 					$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
-					if(count($cat)){
+					if(is_array($cat) and count($cat)){
 						if(count(explode("-", $cat['path'])) >= count($path)){
 							$path = explode("-", $cat['path']);
 							$path[] = $c['categorie_id'];
@@ -62,7 +62,7 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['id']==$this->config->item('shop_id'))
+						if($cat['nume']=='Globiz')
 							$pathArr[] = 'Home';
 						else
 							$pathArr[] = $cat['nume'];
@@ -107,12 +107,6 @@ class Feed extends MY_Controller
 					$imagini_xml->addChild('imagine', $img);
 				}
 				$track->addChild('categorie', xml_convert($categorie));
-				$categorii_xml = $track->addChild('categorii');
-				foreach($pathArr as $categ){
-					$categorii_xml->addChild('categorie', $categ);
-				}
-
-
 				$track->addChild('caleCategorie', xml_convert($pathStr));
 				$track->addChild('unitate_amabalare', $art['cantitate']);
 				$track->addChild('um', $art['um']);
@@ -142,7 +136,7 @@ class Feed extends MY_Controller
 		$feed_hash = $this->uri->segment(4);
 		
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 			// $sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
 			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
@@ -155,7 +149,7 @@ class Feed extends MY_Controller
 			foreach ($articole as $art) {
 				$img = '';
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				if(count($imagine))
+				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				
 				$img_galerie = '';
@@ -164,7 +158,7 @@ class Feed extends MY_Controller
 				foreach($imagini as $imagine){
 					$_img[] = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				}
-				if(count($_img)){
+				if(is_array($_img) and count($_img)){
 					$img_galerie = implode("|", $_img);
 				}
 				
@@ -173,7 +167,7 @@ class Feed extends MY_Controller
 				$path = array();
 				foreach ($categorii as $c){
 					$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
-					if(count($cat)){
+					if(is_array($cat) and count($cat)){
 						if(count(explode("-", $cat['path'])) >= count($path)){
 							$path = explode("-", $cat['path']);
 							$path[] = $c['categorie_id'];
@@ -187,7 +181,7 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['id']==$this->config->item('shop_id'))
+						if($cat['nume']=='Globiz')
 							$pathArr[] = 'Home';
 						else
 							$pathArr[] = $cat['nume'];
@@ -230,10 +224,6 @@ class Feed extends MY_Controller
 					$art['um'],
 					$pret_intreg
 					);
-				foreach ($pathArr as $cat) {
-					$arr[] = $cat;
-				}
-				// print_R($arr);exit();
 				fputcsv($out, $arr);
 			}
 			
@@ -247,7 +237,7 @@ class Feed extends MY_Controller
 		$feed_hash = $this->uri->segment(4);
 
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 			$sql = 'cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
 			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
 			// $articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')));
@@ -258,7 +248,7 @@ class Feed extends MY_Controller
 			foreach ($articole as $art) {
 				$img = '';
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				if(count($imagine))
+				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 					
 				$img_galerie = '';
@@ -267,7 +257,7 @@ class Feed extends MY_Controller
 				foreach($imagini as $imagine){
 					$_img[] = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				}
-				if(count($_img)){
+				if(is_array($_img) and count($_img)){
 					$img_galerie = implode("|", $_img);
 				}
 				
@@ -283,7 +273,7 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['id']==$this->config->item('shop_id'))
+						if($cat['nume']=='Globiz')
 							$pathArr[] = 'Home';
 						else
 							$pathArr[] = $cat['nume'];
@@ -324,7 +314,7 @@ class Feed extends MY_Controller
 		$feed_hash = $this->uri->segment(4);
 		
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 			$this->load->library('includes/Classes/phpexcel');
 			$this->load->library('includes/Classes/PHPExcel/Writer/excel5');
 			$this->load->library('includes/Classes/PHPExcel/Reader/Excel5_reader');
@@ -357,7 +347,7 @@ class Feed extends MY_Controller
 			foreach ($articole as $art) {
 				$img = '';
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				if(count($imagine))
+				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				
 				$objPHPExcel->getActiveSheet()->SetCellValue('A'.$num, $img, PHPExcel_Cell_DataType::TYPE_STRING);
@@ -368,7 +358,7 @@ class Feed extends MY_Controller
 				$path = array();
 				foreach ($categorii as $c){
 					$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
-					if(count($cat)){
+					if(is_array($cat) and count($cat)){
 						if(count(explode("-", $cat['path'])) >= count($path)){
 							$path = explode("-", $cat['path']);
 							$path[] = $c['categorie_id'];
@@ -382,7 +372,7 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['id']==$this->config->item('shop_id'))
+						if($cat['nume']=='Globiz')
 							$pathArr[] = 'Home';
 						else
 							$pathArr[] = $cat['nume'];
@@ -527,7 +517,7 @@ class Feed extends MY_Controller
 		error_reporting(E_ALL);
 		ini_set('display_errors', 1);
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 
 			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')));
 			$filename = "globiz.csv";
@@ -537,7 +527,7 @@ class Feed extends MY_Controller
 			foreach ($articole as $k => $articol) {
 				$img = '';
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $articol['id']), array('ordine' => 'asc'));
-				if(count($imagine))
+				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				
 				$img_galerie = '';
@@ -546,7 +536,7 @@ class Feed extends MY_Controller
 				foreach($imagini as $imagine){
 					$_img[] = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				}
-				if(count($_img)){
+				if(is_array($_img) and count($_img)){
 					$img_galerie = implode("|", $_img);
 				}
 				
@@ -555,7 +545,7 @@ class Feed extends MY_Controller
 				$path = array();
 				foreach ($categorii as $c){
 					$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
-					if(count($cat)){
+					if(is_array($cat) and count($cat)){
 						if(count(explode("-", $cat['path'])) >= count($path)){
 							$path = explode("-", $cat['path']);
 							$path[] = $c['categorie_id'];
@@ -569,7 +559,7 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['id']==$this->config->item('shop_id'))
+						if($cat['nume']=='Globiz')
 							$pathArr[] = 'Home';
 						else
 							$pathArr[] = $cat['nume'];
@@ -616,7 +606,7 @@ class Feed extends MY_Controller
 		$feed_hash = $this->uri->segment(4);
 
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
-		if(count($tert)){
+		if(is_array($tert) and count($tert)){
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id'), 'materom_ok'=>1), array(), array(), $sql);
 
@@ -625,7 +615,7 @@ class Feed extends MY_Controller
 			foreach ($articole as $key => $art) {
 				$img = '';
 				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				if(count($imagine))
+				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 					
 				$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $art['id']), array('ordine' => 'asc'));
@@ -639,7 +629,7 @@ class Feed extends MY_Controller
 				$path = array();
 				foreach ($categorii as $c){
 					$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
-					if(count($cat)){
+					if(is_array($cat) and count($cat)){
 						if(count(explode("-", $cat['path'])) >= count($path)){
 							$path = explode("-", $cat['path']);
 							$path[] = $c['categorie_id'];
@@ -654,7 +644,7 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['id']==$this->config->item('shop_id'))
+						if($cat['nume']=='Globiz')
 							$pathArr[] = 'Home';
 						else
 							$pathArr[] = $cat['nume'];
