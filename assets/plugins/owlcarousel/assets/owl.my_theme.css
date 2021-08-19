@@ -1,0 +1,14 @@
+#thumbs .item { padding: 0px; margin:6px; color: #FFF; border-radius: 3px; text-align: center; cursor: pointer; }
+#thumbs .current .item { background:#FF5722; }
+.owl-theme .owl-nav [class*='owl-'] { -webkit-transition: all .3s ease; transition: all .3s ease; }
+.owl-theme .owl-nav [class*='owl-'].disabled:hover { background-color: #D6D6D6; }
+	
+#big.owl-theme { position: relative; }
+#big.owl-theme .owl-next, #big.owl-theme .owl-prev {width: 22px; line-height:40px; height: 40px; margin-top: -20px; position: absolute; text-align:center; top: 50%; color: rgba(65, 67, 67, 0.5);}
+.owl-theme .owl-nav [class*="owl-"]:hover{background: transparent;color: rgba(65, 67, 67,1);}
+#big.owl-theme .owl-prev { left: 10px; }
+#big.owl-theme .owl-next { right: 10px; }
+#thumbs.owl-theme .owl-next, #thumbs.owl-theme .owl-prev {position: absolute;top: 50%;margin-top: -7px;}
+#big.owl-theme .item{padding: 5px;}
+#thumbs.owl-theme .owl-next{right: -15px;}
+#thumbs.owl-theme .owl-prev{left: -15px;}

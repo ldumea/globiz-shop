@@ -1,0 +1,1 @@
+<?= (isset($error_txt) and ($error_txt!=''))?'<div class="alert alert-danger">'.$error_txt.'</div>':'' ?>

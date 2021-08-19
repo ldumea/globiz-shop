@@ -1,0 +1,1 @@
+<?= (isset($message) and ($message!=''))?'<div class="message succes">'.$message.'</div>':'' ?>
