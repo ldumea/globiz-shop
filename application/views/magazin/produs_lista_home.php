@@ -47,7 +47,7 @@
 	<div class="product-content">
 		<div>
 			<a href="<?= produs_url($produs) ?>">
-				<? if(count($produs['imagine']) and $produs['imagine']['imagine']!=''): ?>
+				<? if(is_array($produs['imagine']) and count($produs['imagine']) and $produs['imagine']['imagine']!=''): ?>
 					<? $src = $this->config->item('static_url').'224/224/'.$produs['imagine']['imagine'] ?>
 					<? $src2 = $this->config->item('static_url').'224/224/'.$produs['imagine2']['imagine'] ?>
 					<img class='img-fluid product-image' src="<?= $src ?>" data-image-second="<?= $src2 ?>"  >

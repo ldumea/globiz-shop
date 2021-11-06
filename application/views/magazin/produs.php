@@ -121,7 +121,11 @@
 									<?= "-".round(100-($pret_mic/$pret_mare)*100)."%" ?>
 								</div>
 							<? endif ?>
-							<? if($stoc_limitat): ?>
+							<? if($produs['tip']==2): ?> <? //resigilat ?>
+								<div class="resigilat">
+								
+								</div>
+							<? elseif($stoc_limitat): ?>
 							<div class="stoc_limitat">
 								
 							</div>

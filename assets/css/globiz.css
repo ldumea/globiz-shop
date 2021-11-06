@@ -381,6 +381,7 @@ label input{vertical-align: middle}
 .procent_discount{position: absolute;right: 7px;top: 17px;background: url('/assets/images/tag-reducere.png');width: 53px;height: 65px;color: #fff;font-size: 14px;font-weight: bold;padding-top: 34px;text-align: left;padding-left: 6px;}
 .procent_discount_blackfriday{position: absolute;right: 7px;top: 17px;background: url('/assets/images/tag-reducere-bf.png');width: 53px;height: 64px;color: #fff;font-size: 14px;font-weight: bold;padding-top: 34px;text-align: left;padding-left: 6px;}
 .stoc_limitat{position: absolute;left: -15px;top: 17px;background: url('/assets/images/ultimele_bucati.png');width: 70px;height: 70px;color: #fff;font-size: 14px;font-weight: bold;padding-top: 34px;text-align: left;padding-left: 6px;}
+.resigilat{position: absolute;left: 5px;top: 22px;background: url('/assets/images/resigilat.png');background-size: 50px;background-repeat: no-repeat;width: 70px;height: 70px;color: #fff;font-size: 14px;font-weight: bold;padding-top: 34px;text-align: left;padding-left: 6px;}
 .product_scroller a {font-size: 20px; color: #E8E7E7; font-weight: lighter;}
 .produs-nou{position: absolute;right: 7px;top: 17px;background: url('/assets/images/tag-new.png'); background-size: cover;width: 63px;height: 50px;color: #fff;font-size: 14px;font-weight: bold;padding-top: 34px;text-align: left;padding-left: 6px;}
 
@@ -646,6 +647,7 @@ table.reducere td{font-size: 12px; text-align: center; color: #000;}
 	right: 25px;
 }
 .produs .stoc_limitat{z-index: 10001;background: url('/assets/images/ultimele_bucati_big.png');width: 82px;height: 100px;background-size: cover;}
+.produs .resigilat{z-index: 10001;width: 82px;height: 82px;background-size: cover;}
 .produs .img360{z-index: 10001;position: absolute;bottom: 145px;right: 25px;}
 .produs.product-item{height: inherit;}
 @media (max-width: 991px) {

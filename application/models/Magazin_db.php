@@ -105,6 +105,11 @@ class Magazin_db extends CI_Model
 		$this->db->where($rec);
 		return $this->db->get('articole')->row_array();
 	}
+	function resigilat($rec = array())
+	{
+		$this->db->where($rec);
+		return $this->db->get('articole_resigilate')->row_array();
+	}
 	function produs_cu_imagine($rec = array())
 	{
 		$this->db->where($rec);

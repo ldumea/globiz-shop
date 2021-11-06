@@ -132,6 +132,7 @@ class MY_Controller extends CI_Controller {
 			discount_negociat();
 		}
 		$this->content['folder'] = $this->session->userdata('folderView')==''?'':$this->session->userdata('folderView').'/';
+		$this->categorie_resigilate_id = 1141;
 		//if($this->agent->is_mobile()){
 			$categorii_mobil_meniu = categorii_meniu_submeniu();
 			$this->content['categorii_mobil_meniu'] = $categorii_mobil_meniu;

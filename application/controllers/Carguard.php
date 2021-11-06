@@ -5,6 +5,7 @@ class Carguard extends MY_Controller
 	function __construct()
 	{
 		parent::__construct();
+		// $this->per_page = 5;
 
 	}
 	
@@ -1014,6 +1015,10 @@ class Carguard extends MY_Controller
 		}
 		//print_r($articole_comp);exit;
 		
+		if($produs['tip'] == 2){ //resigilat
+			$resigilat = $this->magazin_db->resigilat(array('articol_id' => $produs['id']));
+			$produs['descriere'] = "<p><b>Motiv: ".$resigilat['motiv']."</b></p>".$produs['descriere'];
+		}
 		$this->content['complementare'] = $articole_comp;
 		
 		$this->content['produs'] = $produs;
@@ -1170,32 +1175,45 @@ class Carguard extends MY_Controller
 		$this->layout['content'] = $this->load->view('magazin/cautare', $this->content, true);
 		$this->load->view('layout', $this->layout);
 	}
-
+	
 	function produse_oferta(){
 		$tip = $this->uri->rsegment(3);
 		$ordine = array();
 		$where = array();
+		$sql = '';
+		$sql_arr = array();
 		switch ($tip) {
 			case 'promotii':
-				$where = array('promo' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+				$where = array('activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+				$sql_arr[] = "(promo=1 or lichidari=1)";
+				// $sql_arr[] = "(lichidari=1)";
 				$titlu = lang('promotii');
 				$ordine = array('data_articol_promo' => 'desc', 'id' => 'desc');
+				$sql_arr[] = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+				$sql = implode(" AND ", $sql_arr);
+				$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>0), $sql);
 				break;
 			case 'lichidari':
-				$where = array('lichidari' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
 				$titlu = lang('lichidari');
-				$ordine = array('data_articol_lichidari' => 'desc', 'id' => 'desc');
+				$id = $this->categorie_resigilate_id;
+				$categorie = $this->magazin_db->categorie(array('id' => $id));
+				$where_arr = array('articole_categorii.categorie_id' => $id, 'articole.activ' => 1, 'articole.afisare_globiz' => 1);
+				$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+				$produse = $this->magazin_db->produse_categorie($where_arr, array('ordine' => 'asc', 'produs_precomandabil' => 'asc', 'articole.cod' => 'asc'), array('per_page'=> $this->per_page, 'no'=>0), $sql);
 				break;
 			default:
 				$where = array('nou' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
 				$titlu = lang('noutati');
 				$ordine = array('data_articol_nou' => 'desc', 'id' => 'desc');
+				$sql_arr[] = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+				$sql = implode(" AND ", $sql_arr);
+				$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>0), $sql);
 				break;
 		}
 		//$where['articole.stoc > '] = 0;
-		$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor >0 ))';
-		$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
-		$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>0), $sql);
+		// $sql = '((articole.stoc > 0) OR (articole.stoc_furnizor >0 ))';
+		
+		// echo $this->db->last_query();
 		$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 		
 		$cos = $this->cart->contents();
@@ -1210,79 +1228,6 @@ class Carguard extends MY_Controller
 					else $grupuri[$art_gr['grup_id']]['no_produse'] = $c['qty'];
 			}
 		}
-				
-		//foreach ($produse as $k => $p) {
-		//	$produse[$k]['discount'] = array();
-		//	$discountVal = 0;
-		//	$maxDiscount = 0;
-		//
-		//	//$stocuri = $this->magazin_db->produs_locatii(array('articol_id' => $p['id']));
-		//	//$stoc = 0;
-		//	//foreach ($stocuri as $s) {
-		//	//	$stoc+=$s['stoc'];
-		//	//}
-		//	//$produse[$k]['stoc'] = $stoc;
-		//	$produse[$k]['cantitate'] = $p['cantitate']==0?1:$p['cantitate'];
-		//	$p['cantitate'] = $p['cantitate']==0?1:$p['cantitate'];
-		//	if($p['pret_intreg']<=$p['pret_vanzare']){
-		//		$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $p['id']));
-		//		if(count($art_gr))
-		//		{
-		//			//produsul este in grup
-		//			if(isset($grupuri[$art_gr['grup_id']]))
-		//			{
-		//				$discount = $this->magazin_db->discount_grup(array('grup_id' => $art_gr['grup_id'], 'no_produse <= '=>$grupuri[$art_gr['grup_id']]['no_produse']));
-		//				if(count($discount))
-		//				{
-		//					$discountVal = $discount['discount'];
-		//				}
-		//			}
-		//			$produse[$k]['discount'] =  $this->magazin_db->dicounturi_grup(array('grup_id' => produsInGrup($p['id'])));
-		//			foreach ($produse[$k]['discount'] as $d) {
-		//				if($maxDiscount < $d['discount'])
-		//					$maxDiscount = $d['discount'];
-		//			}
-		//		} elseif(count($plafon = reduceriProdus($p['id']))) {
-		//			$produse[$k]['discount'] = $plafon;
-		//			$cart_item = $this->cart->find_by_id($p['id']);
-		//			if(count($cart_item))
-		//			{
-		//				$discount = $this->magazin_db->plafoan_reducere_individual(array('articol_id' => $p['id'], 'no_produse <= '=>$cart_item['qty']/$p['cantitate']));
-		//				if(count($discount))
-		//					$discountVal = $discount['discount'];
-		//			}
-		//			foreach ($produse[$k]['discount'] as $d) {
-		//				if($maxDiscount < $d['discount'])
-		//					$maxDiscount = $d['discount'];
-		//			}
-		//		}else{
-		//			//reduceri generale
-		//			$produse[$k]['discount'] = $plafoane_reducere;
-		//			$cart_item = $this->cart->find_by_id($p['id']);
-		//			if(count($cart_item))
-		//			{
-		//				$discount = $this->magazin_db->plafoan_reducere_general(array('no_produse <= '=>$cart_item['qty']/$p['cantitate']));
-		//				if(count($discount))
-		//					$discountVal = $discount['discount'];
-		//			}
-		//			foreach ($produse[$k]['discount'] as $d) {
-		//				if($maxDiscount < $d['discount'])
-		//					$maxDiscount = $d['discount'];
-		//			}
-		//		}
-		//	} else {
-		//		$produse[$k]['discount'] = array();
-		//	}
-		//	$produse[$k]['discountVal'] =  $discountVal;
-		//	$produse[$k]['maxDiscount'] = $maxDiscount;
-		//	$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $p['id']), array('ordine' => 'asc'));
-		//	$imagine2 = $this->magazin_db->produse_imagine(array('articol_id' => $p['id'], 'id !=' => $imagine['id']), array('ordine' => 'asc'));
-		//	$produse[$k]['imagine'] = $imagine;
-		//	$produse[$k]['imagine2'] = count($imagine2)?$imagine2:$imagine;
-		//	//$produse[$k]['pret_vanzare'] = $p['pret_vanzare']-($p['pret_vanzare']*$discountVal)/100;
-		//}
-		
-		
 		foreach ($produse as $k => &$p) {
 			$p['cantitate'] = $p['cantitate']==0?1:$p['cantitate'];
 			$p['cantitate'] = $p['cantitate']==0?1:$p['cantitate'];
@@ -1310,34 +1255,47 @@ class Carguard extends MY_Controller
 		$this->displayPage('magazin/produse_oferta');
 	}
 	function produse_oferta_pagina(){
-
 		$tip = $this->uri->rsegment(3);
 		$ordine = array();
 		$where = array();
+		$sql = '';
+		$sql_arr = array();
+		$pagina = $this->uri->segment(4);
+		$_pagina = ($this->per_page*$pagina);
 		switch ($tip) {
 			case 'promotii':
-				$where = array('promo' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+				$where = array('activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+				$sql_arr[] = "(promo=1 or lichidari=1)";
+				// $sql_arr[] = "(lichidari=1)";
 				$titlu = lang('promotii');
 				$ordine = array('data_articol_promo' => 'desc', 'id' => 'desc');
+				$sql_arr[] = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+				$sql = implode(" AND ", $sql_arr);
+
+				$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>$_pagina), $sql);
 				break;
 			case 'lichidari':
-				$where = array('lichidari' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+				// $where = array('lichidari' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+				// $titlu = lang('lichidari');
+				// $ordine = array('data_articol_lichidari' => 'desc', 'id' => 'desc');
 				$titlu = lang('lichidari');
-				$ordine = array('data_articol_lichidari' => 'desc', 'id' => 'desc');
+				$id = $this->categorie_resigilate_id;
+				$categorie = $this->magazin_db->categorie(array('id' => $id));
+				$where_arr = array('articole_categorii.categorie_id' => $id, 'articole.activ' => 1, 'articole.afisare_globiz' => 1);
+				$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+				$produse = $this->magazin_db->produse_categorie($where_arr, array('ordine' => 'asc', 'produs_precomandabil' => 'asc', 'articole.cod' => 'asc'), array('per_page'=> $this->per_page, 'no'=>$_pagina), $sql);
+				// echo $this->db->last_query();
 				break;
 			default:
 				$where = array('nou' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
 				$titlu = lang('noutati');
 				$ordine = array('data_articol_nou' => 'desc', 'id' => 'desc');
+				$sql_arr[] = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+				$sql = implode(" AND ", $sql_arr);
+				$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>$_pagina), $sql);
 				break;
 		}
 		//$where['articole.stoc > '] = 0;
-		$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor >0 ))';
-		$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
-		$pagina = $this->uri->segment(4);
-		$_pagina = ($this->per_page*$pagina);
-		$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>$_pagina), $sql);
-		
 		$plafoane_reducere = $this->magazin_db->plafoane_reducere_generale();
 		
 		$cos = $this->cart->contents();

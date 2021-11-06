@@ -48,7 +48,7 @@
 		<div class="cod"><?= $produs['cod'] ?></div>
 		<div>
 			<a href="<?= produs_url($produs) ?>">
-				<? if(count($produs['imagine']) and $produs['imagine']['imagine']!=''): ?>
+				<? if(is_array($produs['imagine']) and count($produs['imagine']) and $produs['imagine']['imagine']!=''): ?>
 					<? $src = $this->config->item('static_url').'201/201/'.$produs['imagine']['imagine'] ?>
 					<? $src2 = $this->config->item('static_url').'201/201/'.$produs['imagine2']['imagine'] ?>
 					<img class='img-fluid product-image' src="<?= $src ?>" data-image-second="<?= $src2 ?>"  >
@@ -199,7 +199,11 @@
 						</div>
 					<? endif ?>
 				<? endif ?>
-				<? if($stoc_limitat): ?>
+				<? if($produs['tip']==2): ?> <? //resigilat ?>
+					<div class="resigilat">
+					
+					</div>
+				<? elseif($stoc_limitat): ?>
 				<div class="stoc_limitat">
 					
 				</div>
