@@ -29,7 +29,7 @@
 						<div class="price">
 							<ins>
 								<? if(($p['stoc']!=0) or ($p['stoc_furnizor']!=0)):?>
-									<? if($this->config->item('blackfriday')): ?>
+									<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 										<?= number_format($p['pret_vanzare']/$curs-(($p['pret_vanzare']*$p['maxDiscount'])/$curs)/100,2,",",".") ?> <?= $moneda ?>
 									<? else: ?>
 										<?= number_format($p['pret_vanzare']/$curs-(($p['pret_vanzare']*$p['discountVal'])/$curs)/100,2,",",".") ?> <?= $moneda ?>
@@ -39,7 +39,7 @@
 							<!-- preti vechi mai mare -->
 							<del>
 								<? if(($p['stoc']!=0) or ($p['stoc_furnizor']!=0)):?>
-									<? if($this->config->item('blackfriday')): ?>
+									<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 										<? if($p['pret_intreg']>$p['pret_vanzare']): ?>
 											<?= number_format($p['pret_intreg']/$curs,2,",",".") ?> <?= $moneda ?>
 										<? else: ?>
@@ -72,7 +72,7 @@
 							</div>
 						<? endif ?>
 
-						<? if(!$this->config->item('blackfriday')): ?>
+						<? if(!($this->config->item('blackfriday') and !($this->session->userdata('dropshipping')))): ?>
 							<div class="reducere">
 								<? if(!($this->session->userdata('discount')>0)): ?>
 									<? if(($p['stoc']!=0) or ($p['stoc_furnizor']!=0)):?>
