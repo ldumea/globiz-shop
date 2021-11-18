@@ -474,7 +474,7 @@ class Cos extends MY_Controller
 							$this->cart->update_price($data);
 							break;
 						default:
-							if(!$this->config->item('blackfriday')) {
+							if(!($this->config->item('blackfriday') and !($this->session->userdata('dropshipping')))) {
 								if( in_array($produs['furnizor_id'], $this->furnizori_asociati) or !($this->session->userdata('discount')>0)){
 									if($produs['pret_intreg']<=$produs['pret_vanzare']){
 										$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $item['id']));
@@ -698,7 +698,7 @@ class Cos extends MY_Controller
 							default:
 								if( in_array($produs['furnizor_id'], $this->furnizori_asociati) or !($this->session->userdata('discount')>0)){
 									$maxDiscount = 0;
-									if($this->config->item('blackfriday')) {
+									if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))) {
 										if($produs['pret_intreg']<=$produs['pret_vanzare']) 
 										{
 											$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $id));
@@ -969,7 +969,7 @@ class Cos extends MY_Controller
 			'qty'   => 0
 		);
 		$this->cart->update($data);
-		if(!$this->config->item('blackfriday')) {
+		if(!($this->config->item('blackfriday') and !($this->session->userdata('dropshipping')))) {
 			$art_gr = $this->magazin_db->articol_grup(array('articol_id' => $item['id']));
 			if(is_array($art_gr) and count($art_gr))
 			{

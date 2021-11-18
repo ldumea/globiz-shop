@@ -74,13 +74,13 @@
 				<? $pret_mare = 0 ?>
 				<? $pret_mic = 0 ?>
 				<div class="price">
-					<? if($this->config->item('blackfriday')): ?>
+					<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 						<?= number_format(($produs['pret_vanzare']/$curs)-(($produs['pret_vanzare']/$curs)*$produs['maxDiscount'])/100,2,",",".") ?> <?= $moneda ?>
 					<? else: ?>
 						<?= number_format(($produs['pret_vanzare']/$curs)-(($produs['pret_vanzare']/$curs)*$produs['discountVal'])/100,2,",",".") ?> <?= $moneda ?>
 					<? endif ?>
 					<del>
-						<? if($this->config->item('blackfriday')): ?>
+						<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 							<? if(($produs['pret_intreg']/$curs)>($produs['pret_vanzare']/$curs)): ?>
 								<?= number_format(($produs['pret_intreg']/$curs),2,",",".") ?> <?= $moneda ?>
 							<? else: ?>
@@ -98,7 +98,7 @@
 				<div class="info">
 					<div class="hover"><?= lang('ambalaj') ?>: <b><?= $produs['cantitate'] ?> <?= $produs['um'] ?></b></div>
 					<div class="hover">
-						<? if(!$this->config->item('blackfriday')): ?>
+						<? if(!($this->config->item('blackfriday') and !($this->session->userdata('dropshipping')))): ?>
 							<? if( (($produs['pret_intreg']/$curs)!=0) and (($produs['pret_intreg']/$curs)>($produs['pret_vanzare']/$curs)) ): ?>
 								<div style="height: 59px;" class="display-mobile"></div>
 							<? else: ?>
@@ -173,7 +173,7 @@
 						<? endif ?>
 					</div>
 				</div>
-				<? if($this->config->item('blackfriday')): ?>
+				<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 					<? if($produs['pret_intreg']>$produs['pret_vanzare']): ?>
 						<? $pret_mare = $produs['pret_intreg'] ?>
 					<? else: ?>
@@ -186,7 +186,7 @@
 					<? endif ?>
 					<? $pret_mic = $produs['pret_vanzare'] ?>
 				<? endif ?>
-				<? if($this->config->item('blackfriday')):?>
+				<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))):?>
 					<? if(round(100-($pret_mic/$pret_mare)*100)!=0): ?>
 						<div class="procent_discount_blackfriday">
 							<?= "-".round(100-($pret_mic/$pret_mare)*100)."%" ?>

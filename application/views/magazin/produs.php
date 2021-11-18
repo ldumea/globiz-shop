@@ -102,8 +102,7 @@
 									</div>
 								<? endforeach ?>
 							</div>
-							
-							<? if($this->config->item('blackfriday')): ?>
+							<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 								<? if($produs['pret_intreg']>$produs['pret_vanzare']): ?>
 									<? $pret_mare = $produs['pret_intreg'] ?>
 								<? else: ?>
@@ -162,7 +161,7 @@
 											<div class="price">
 												Pret:
 												<strong>
-												<? if($this->config->item('blackfriday')): ?>
+												<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 													<?= number_format(($produs['pret_vanzare']/$curs)-(($produs['pret_vanzare']/$curs)*$produs['maxDiscount'])/100,2,",",".") ?> <?= $moneda ?>
 												<? else: ?>
 													<? if(($produs['pret_intreg']/$curs)>($produs['pret_vanzare']/$curs)): ?>
@@ -172,7 +171,7 @@
 													<? endif ?>
 												<? endif ?>
 												</strong>
-												<? if($this->config->item('blackfriday')): ?>
+												<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
 													<? if(($produs['pret_intreg']/$curs)>($produs['pret_vanzare']/$curs)): ?>
 														<del><?= number_format(($produs['pret_intreg']/$curs),2,",",".") ?> <?= $moneda ?></del>
 													<? else: ?>
@@ -189,7 +188,7 @@
 											<div class="ambalare">
 												<?= lang('ambalaj') ?>: <strong><?= $produs['cantitate'] ?> <?= $produs['um'] ?></strong>
 											</div>
-											<? if(!$this->config->item('blackfriday')): ?>
+											<? if(!($this->config->item('blackfriday') and !($this->session->userdata('dropshipping')))): ?>
 												<? if( (($produs['pret_intreg']/$curs)!=0) and (($produs['pret_intreg']/$curs)>($produs['pret_vanzare']/$curs)) ): ?>
 												<? else: ?>
 													<? if( in_array($produs['furnizor_id'], $this->furnizori_asociati) or !($this->session->userdata('discount')>0)): ?>
