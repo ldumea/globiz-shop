@@ -679,7 +679,11 @@ class Cos extends MY_Controller
 					}
 				} else {
 					if($this->session->userdata('discount')==-1){
-						switch($this->session->userdata('tip_pret')){
+						$tip_tert = $this->session->userdata('tip_pret');
+						if(($this->config->item('blackfriday') and !($this->session->userdata('dropshipping')))) {
+							$tip_tert = 1;
+						}
+						switch($tip_tert){
 							case 2:
 							case 3:
 							case 4:

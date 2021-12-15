@@ -173,7 +173,7 @@ class Feed extends MY_Controller
 							$path[] = $c['categorie_id'];
 						}
 						if($categorie =='')
-							$categorie = $cat['nume'];
+							$categorie = html_entity_decode($cat['nume']);
 					}
 				}
 				$pathStr = '';
@@ -181,10 +181,10 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['nume']=='Globiz')
+						if($cat['nume']=='Globiz - Maniac')
 							$pathArr[] = 'Home';
 						else
-							$pathArr[] = $cat['nume'];
+							$pathArr[] = html_entity_decode($cat['nume']);
 					}
 				}
 				$pathStr = implode(" / ", $pathArr);
@@ -210,7 +210,7 @@ class Feed extends MY_Controller
 
 				$arr = array(
 					$art['cod'],
-					$art['denumire'],
+					html_entity_decode($art['denumire']),
 					$art['descriere'],
 					$pret,
 					$img,
@@ -512,26 +512,28 @@ class Feed extends MY_Controller
 	function csv_test(){
 		$id = $this->uri->segment(3);
 		$feed_hash = $this->uri->segment(4);
-
-		// ini_set ( 'max_execution_time', 3600); 
-		error_reporting(E_ALL);
-		ini_set('display_errors', 1);
+		// echo htmlspecialchars("&#537;", ENT_QUOTES | ENT_XML1, 'UTF-8');exit();
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
 		if(is_array($tert) and count($tert)){
+			// $sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
+			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
+			$limits = array();
+			// $limits = array('per_page'=> 100, 'no'=>0);
+			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), $limits, $sql);
 
-			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')));
+			// $articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')));
 			$filename = "globiz.csv";
 			header("Content-Type: text/csv; charset=utf-8");
 			header( 'Content-Disposition: attachment;filename='.$filename);
 			$out = fopen('php://output', 'w');
-			foreach ($articole as $k => $articol) {
+			foreach ($articole as $art) {
 				$img = '';
-				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $articol['id']), array('ordine' => 'asc'));
+				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
 				if(is_array($imagine) and count($imagine))
 					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
 				
 				$img_galerie = '';
-				$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $articol['id']), array('ordine' => 'asc'));
+				$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $art['id']), array('ordine' => 'asc'));
 				$_img = array();
 				foreach($imagini as $imagine){
 					$_img[] = $this->config->item('media_url').'articole/'.$imagine['imagine'];
@@ -540,7 +542,7 @@ class Feed extends MY_Controller
 					$img_galerie = implode("|", $_img);
 				}
 				
-				$categorii = $this->magazin_db->produs_categorii(array('articol_id' => $articol['id']));
+				$categorii = $this->magazin_db->produs_categorii(array('articol_id' => $art['id']));
 				$categorie = '';
 				$path = array();
 				foreach ($categorii as $c){
@@ -551,7 +553,7 @@ class Feed extends MY_Controller
 							$path[] = $c['categorie_id'];
 						}
 						if($categorie =='')
-							$categorie = $cat['nume'];
+							$categorie = html_entity_decode($cat['nume']);
 					}
 				}
 				$pathStr = '';
@@ -559,41 +561,54 @@ class Feed extends MY_Controller
 				foreach ($path as $p) {
 					$cat = $this->magazin_db->categorie(array('id' => $p));
 					if(is_array($cat) and count($cat)){
-						if($cat['nume']=='Globiz')
+						if($cat['nume']=='Globiz - Maniac')
 							$pathArr[] = 'Home';
 						else
-							$pathArr[] = $cat['nume'];
+							$pathArr[] =html_entity_decode($cat['nume']);
 					}
 				}
 				$pathStr = implode(" / ", $pathArr);
 
-				if( ($articol['stoc']==0) and ($articol['stoc_furnizor']<15) and ($articol['pret_furnizor']<2000)){
+				if( ($art['stoc']==0) and ($art['stoc_furnizor']<15) and ($art['pret_furnizor']<2000)){
 					$text = 'PRECOMANDA';
-				} elseif( ($articol['stoc']==0) and ($articol['stoc_furnizor']==0) and ($articol['furnizor_id']==1)){
+				} elseif( ($art['stoc']==0) and ($art['stoc_furnizor']==0) and ($art['furnizor_id']==1)){
 					$text = 'PRECOMANDA';
-				} elseif(($articol['stoc']+$articol['stoc_furnizor']==0) and ($articol['precomanda']==1)) {
+				} elseif(($art['stoc']+$art['stoc_furnizor']==0) and ($art['precomanda']==1)) {
 					$text = 'PRECOMANDA';
-				} elseif($articol['stoc']+$articol['stoc_furnizor']<30){
+				} elseif($art['stoc']+$art['stoc_furnizor']<30){
 					$text = 'STOC LIMITAT';
 				} else{
 					$text = 'IN STOC';
 				}
+				$marca = $this->magazin_db->marca(array('id' => $art['marca_id']));
+				$marca_text = isset($marca['marca'])?$marca['marca']:'';
+				$pret = number_format($art['pret_vanzare'], 2);
+				$pret_intreg = $pret;
+				if ($art['pret_intreg'] > 0 && $art['pret_intreg'] != '' && $art['pret_vanzare'] < $art['pret_intreg']) {
+					$pret_intreg = number_format($art['pret_intreg'],2);
+				}
 
 				$arr = array(
-					$articol['cod'],
-					$articol['denumire'],
-					$articol['descriere'],
-					number_format($articol['pret_vanzare'], 2),
+					$art['cod'],
+					html_entity_decode($art['denumire']),
+					$art['descriere'],
+					$pret,
 					$img,
 					$categorie,
 					$pathStr,
 					$text,
-					$img_galerie
+					$img_galerie,
+					$marca_text,
+					$art['cod_bare'],
+					$art['cantitate'],
+					$art['um'],
+					$pret_intreg
 					);
 				fputcsv($out, $arr);
 			}
 			
 			fclose($out);
+
 		}else redirect(site_url());
 	}
 	

@@ -83,64 +83,65 @@
 			<div class="col-sm-9 mt10 product-item produs product_id_<?= $produs['id'] ?>" id="content">
 				<div class="row  ">
 					<div class="col-6">
-							<div id="big" class="owl-carousel owl-theme">
-								<? foreach ($imagini as $k => $i) : ?>
-									<? $srcImg = $this->config->item('static_url').'680/680/'.$i['imagine'] ?>
-									<? $srcLargeImg = $this->config->item('static_url').'680/680/'.$i['imagine'] ?>
-									<div class="item">
-										<div class="shadow img">
-											<img class="img-responsive imgZoom"  data-zoom-image="<?= $srcLargeImg ?>" src="<?= $srcImg ?>" alt=""/>
-										</div>
+						<div id="big" class="owl-carousel owl-theme">
+							<? foreach ($imagini as $k => $i) : ?>
+								<? $srcImg = $this->config->item('static_url').'680/680/'.$i['imagine'] ?>
+								<? $srcLargeImg = $this->config->item('static_url').'680/680/'.$i['imagine'] ?>
+								<div class="item">
+									<div class="shadow img">
+										<img class="img-responsive imgZoom"  data-zoom-image="<?= $srcLargeImg ?>" src="<?= $srcImg ?>" alt=""/>
 									</div>
-								<? endforeach ?>
-							</div>
-							<div id="thumbs" class="owl-carousel owl-theme">
-								<? foreach ($imagini as $k => $i) : ?>
-									<? $srcImg = $this->config->item('static_url').'200/200/'.$i['imagine'] ?>
-									<div class="item shadow">
-										<img class="img-responsive" src="<?= $srcImg ?>" alt=""/>
-									</div>
-								<? endforeach ?>
-							</div>
-							<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
-								<? if($produs['pret_intreg']>$produs['pret_vanzare']): ?>
-									<? $pret_mare = $produs['pret_intreg'] ?>
-								<? else: ?>
-									<? $pret_mare = $produs['pret_vanzare'] ?>
-								<? endif ?>
-								<? $pret_mic = $produs['pret_vanzare']-($produs['pret_vanzare']*$produs['maxDiscount'])/100 ?>
+								</div>
+							<? endforeach ?>
+						</div>
+						<div id="thumbs" class="owl-carousel owl-theme">
+							<? foreach ($imagini as $k => $i) : ?>
+								<? $srcImg = $this->config->item('static_url').'200/200/'.$i['imagine'] ?>
+								<div class="item shadow">
+									<img class="img-responsive" src="<?= $srcImg ?>" alt=""/>
+								</div>
+							<? endforeach ?>
+						</div>
+						<? //print_r($produs) ?>
+						<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
+							<? if($produs['pret_intreg']>$produs['pret_vanzare']): ?>
+								<? $pret_mare = $produs['pret_intreg'] ?>
 							<? else: ?>
-								<? if( ($produs['pret_intreg']!=0) and ($produs['pret_intreg']>$produs['pret_vanzare']) ): ?>
-									<? $pret_mare = $produs['pret_intreg'] ?>
-								<? endif ?>
-								<? $pret_mic = $produs['pret_vanzare'] ?>
+								<? $pret_mare = $produs['pret_vanzare'] ?>
 							<? endif ?>
-							<? if(($pret_mare != 0) && ($pret_mic!=0) && ($pret_mare > $pret_mic)): ?>
-								<div class="procent_discount">
-									<?= "-".round(100-($pret_mic/$pret_mare)*100)."%" ?>
-								</div>
+							<? $pret_mic = $produs['pret_vanzare']-($produs['pret_vanzare']*$produs['maxDiscount'])/100 ?>
+						<? else: ?>
+							<? if( ($produs['pret_intreg']!=0) and ($produs['pret_intreg']>$produs['pret_vanzare']) ): ?>
+								<? $pret_mare = $produs['pret_intreg'] ?>
 							<? endif ?>
-							<? if($produs['tip']==2): ?> <? //resigilat ?>
-								<div class="resigilat">
-								
-								</div>
-							<? elseif($stoc_limitat): ?>
-							<div class="stoc_limitat">
-								
+							<? $pret_mic = $produs['pret_vanzare'] ?>
+						<? endif ?>
+						<? if(($pret_mare != 0) && ($pret_mic!=0) && ($pret_mare > $pret_mic)): ?>
+							<div class="procent_discount">
+								<?= "-".round(100-($pret_mic/$pret_mare)*100)."%" ?>
 							</div>
-							<? endif ?>
+						<? endif ?>
+						<? if($produs['tip']==2): ?> <? //resigilat ?>
+							<div class="resigilat">
 							
-							<? if(count($imagini360)): ?>
-								<? $i360 = $imagini360[0]; ?>
-								<? $src = $this->config->item('media_url') ?>
-								<? $src = 'https://crm.carguard.ro/media/' ?>
-								<? $src.='articole_imagini360/'.$i360['id'].'/iframe.html' ?>
-								<div class="img360">
-									<a href="<?= $src ?>" class="fancyframe">
-										<img src="<?= site_url() ?>assets/images/360.png" />
-									</a>
-								</div>
-							<? endif ?>
+							</div>
+						<? elseif($stoc_limitat): ?>
+						<div class="stoc_limitat">
+							
+						</div>
+						<? endif ?>
+						
+						<? if(count($imagini360)): ?>
+							<? $i360 = $imagini360[0]; ?>
+							<? $src = $this->config->item('media_url') ?>
+							<? $src = 'https://crm.carguard.ro/media/' ?>
+							<? $src.='articole_imagini360/'.$i360['id'].'/iframe.html' ?>
+							<div class="img360">
+								<a href="<?= $src ?>" class="fancyframe">
+									<img src="<?= site_url() ?>assets/images/360.png" />
+								</a>
+							</div>
+						<? endif ?>
 					</div>
 					<div class="col-6">
 						<div>

@@ -381,6 +381,7 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 	if($tip_tert == ''){
 		 $tip_tert = $ci->session->userdata('tip_pret');
 	}
+	// echo 'Tip tert: '.$tip_tert;
 	$pret = array();
 	if($pret_special == true){
 		if($ci->session->userdata('loggedFrontend')){
@@ -395,6 +396,9 @@ function pret_produs($produs, $plafoane_reducere, $pret_special = false, $tip_te
 		$produs['pret_vanzare_tva'] = $produs['pret_vanzare']*(100+$produs['tva'])/100;
 		$produs['discount'] = array();
 	} else {
+		if(($ci->config->item('blackfriday') and !($ci->session->userdata('dropshipping')))) {
+			$tip_tert = 1;
+		}
 		if( in_array($produs['furnizor_id'], $ci->furnizori_asociati) or !($ci->session->userdata('discount')>0)){
 			if($produs['pret_intreg']<=$produs['pret_vanzare']){
 				

@@ -48,7 +48,7 @@
 <section>
 	<div class="container">
 		<div class="row categorie">
-			<div class="col-md-12 mt10 product-item  product_id_<?= $produs['id'] ?>" id="content">
+			<div class="col-md-12 mt10 <? /*product-item*/ ?> product_id_<?= $produs['id'] ?>" id="content">
 				<div class="row produs">
 					<div class="col-12">
 						<div class="cod">
@@ -76,41 +76,41 @@
 							<? endforeach ?>
 						</div>
 						
-							<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
-								<? if($produs['pret_intreg']>$produs['pret_vanzare']): ?>
-									<? $pret_mare = $produs['pret_intreg'] ?>
-								<? else: ?>
-									<? $pret_mare = $produs['pret_vanzare'] ?>
-								<? endif ?>
-								<? $pret_mic = $produs['pret_vanzare']-($produs['pret_vanzare']*$produs['maxDiscount'])/100 ?>
+						<? if($this->config->item('blackfriday') and !($this->session->userdata('dropshipping'))): ?>
+							<? if($produs['pret_intreg']>$produs['pret_vanzare']): ?>
+								<? $pret_mare = $produs['pret_intreg'] ?>
 							<? else: ?>
-								<? if( ($produs['pret_intreg']!=0) and ($produs['pret_intreg']>$produs['pret_vanzare']) ): ?>
-									<? $pret_mare = $produs['pret_intreg'] ?>
-								<? endif ?>
-								<? $pret_mic = $produs['pret_vanzare'] ?>
+								<? $pret_mare = $produs['pret_vanzare'] ?>
 							<? endif ?>
-							<? if(($pret_mare != 0) && ($pret_mic!=0) && ($pret_mare > $pret_mic)): ?>
-								<div class="procent_discount">
-									<?= "-".round(100-($pret_mic/$pret_mare)*100)."%" ?>
-								</div>
+							<? $pret_mic = $produs['pret_vanzare']-($produs['pret_vanzare']*$produs['maxDiscount'])/100 ?>
+						<? else: ?>
+							<? if( ($produs['pret_intreg']!=0) and ($produs['pret_intreg']>$produs['pret_vanzare']) ): ?>
+								<? $pret_mare = $produs['pret_intreg'] ?>
 							<? endif ?>
-							<? if($stoc_limitat): ?>
-							<div class="stoc_limitat">
-								
+							<? $pret_mic = $produs['pret_vanzare'] ?>
+						<? endif ?>
+						<? if(($pret_mare != 0) && ($pret_mic!=0) && ($pret_mare > $pret_mic)): ?>
+							<div class="procent_discount">
+								<?= "-".round(100-($pret_mic/$pret_mare)*100)."%" ?>
 							</div>
-							<? endif ?>
+						<? endif ?>
+						<? if($stoc_limitat): ?>
+						<div class="stoc_limitat">
 							
-							<? if(count($imagini360)): ?>
-								<? $i360 = $imagini360[0]; ?>
-								<? $src = $this->config->item('media_url') ?>
-								<? $src = 'https://crm.carguard.ro/media/' ?>
-								<? $src.='articole_imagini360/'.$i360['id'].'/iframe.html' ?>
-								<div class="img360">
-									<a href="<?= $src ?>" class="fancyframe">
-										<img src="<?= site_url() ?>assets/images/360.png" />
-									</a>
-								</div>
-							<? endif ?>
+						</div>
+						<? endif ?>
+						
+						<? if(count($imagini360)): ?>
+							<? $i360 = $imagini360[0]; ?>
+							<? $src = $this->config->item('media_url') ?>
+							<? $src = 'https://crm.carguard.ro/media/' ?>
+							<? $src.='articole_imagini360/'.$i360['id'].'/iframe.html' ?>
+							<div class="img360">
+								<a href="<?= $src ?>" class="fancyframe">
+									<img src="<?= site_url() ?>assets/images/360.png" />
+								</a>
+							</div>
+						<? endif ?>
 					</div>
 					<div class="col-md-6 col-sm-12">
 						<h1 class="mb-4"><?= $produs['denumire'.$this->session->userdata('fieldLang')]!=''?$produs['denumire'.$this->session->userdata('fieldLang')]:$produs['denumire'] ?></h1>
