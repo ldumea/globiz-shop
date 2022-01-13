@@ -962,6 +962,27 @@ class Cos extends MY_Controller
 
 		echo json_encode($ret);
 	}
+
+	function cos_top_test()
+	{
+		$no_articole = count($this->cart->contents());
+		$item = $this->cart->find_by_id('transport');
+		if(is_array($item) and count($item)){
+			$no_articole -=1;
+		}
+		$item = $this->cart->find_by_id('discount');
+		if(is_array($item) and count($item)){
+			$no_articole -=1;
+		}
+		
+		$ret = array(
+				'list' 			=> $this->load->view('cos/cos_top_list', $this->content, TRUE), 
+				'sumar' 		=> $this->load->view('cos/cos_top_sumar', $this->content, TRUE),
+				'no_articole'	=> $no_articole
+			);
+		echo $ret['list'];
+		// echo json_encode($ret);
+	}
 	function sterge_produs(){
 		$id = $this->input->post('id');
 		$items = $this->cart->contents();

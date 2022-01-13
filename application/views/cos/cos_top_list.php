@@ -6,20 +6,25 @@
 	$discount = array();
 	$voucher = array();
     $total = 0;
+    $total_tva = 0;
     if (count($cart))
     {
         foreach($cart as $k=>$c){
             $produs = $this->magazin_db->produs(array('id' => $c['id']));
-            if(count($produs)){
+            if(is_array($produs) and count($produs)){
                 $produs['imagine'] = $this->magazin_db->produse_imagine(array('articol_id' => $produs['id']), array('ordine' => 'asc'));
                 $cos[$k] = $c;
                 $cos[$k]['url'] = produs_url($produs);
                 $cos[$k]['produs'] = $produs;
                 // if(isset($c['options']['ecotaxa']) and ($c['options']['ecotaxa']!=0))
                 //     $total+=$c['options']['ecotaxa']*$c['qty'];
+				$cart[$k]['tva'] = $this->session->userdata('valoare_tva')==0?$this->session->userdata('valoare_tva'):$produs['tva'];
 				
 				$total+=$c['subtotal'];
-            }
+            } else {
+				$cart[$k]['tva'] = $this->session->userdata('valoare_tva');
+			}
+			$total_tva+= $c['subtotal']*$cart[$k]['tva']/100;
 			switch($c['id']){
 				case 'transport':
 					$transport = $c;
@@ -87,6 +92,7 @@
 			<div class="clearfix"></div>
 		</div>	
 			<? $total = $total+$discount['subtotal']; ?>
+			<? $total_tva = $total_tva+$discount['subtotal']*$discount['tva']/100; ?>
 		<? endif ?>
 		<? if(count($voucher)) :?>
 		<div>
@@ -95,6 +101,7 @@
 			<div class="clearfix"></div>
 		</div>	
 			<? $total = $total+$voucher['subtotal']; ?>
+			<? $total_tva = $total_tva+$voucher['subtotal']*$voucher['tva']/100; ?>
 		<? endif ?>
 		<? if(count($transport)) :?>
 		<div>
@@ -103,14 +110,25 @@
 			<div class="clearfix"></div>
 		</div>	
 			<? $total = $total+$transport['subtotal']; ?>
+			<? $total_tva = $total_tva+$transport['subtotal']*$transport['tva']/100; ?>
 		<? endif ?>
 	</div>
 	<hr class="gray"/>
 	<div>
 		<? if(count($cos)): ?>
 		<div>
-			<div class="float-left"><?= lang('total') ?></div>
+			<div class="float-left"><?= lang('Valoare fără TVA') ?></div>
 			<div class="float-right"><b><?= number_format($total,2,",",".") ?> <?= $moneda ?></b></div>
+		</div>
+		<div class="clearfix"></div>
+		<div>
+			<div class="float-left"><?= lang('Valoare TVA') ?></div>
+			<div class="float-right"><b><?= number_format($total_tva,2,",",".") ?> <?= $moneda ?></b></div>
+		</div>
+		<div class="clearfix"></div>
+		<div>
+			<div class="float-left"><?= lang('Valoare cu TVA') ?></div>
+			<div class="float-right"><b><?= number_format($total+$total_tva,2,",",".") ?> <?= $moneda ?></b></div>
 		</div>
 		<div class="clearfix"></div>
 		<a href="<?= site_url('cos/finalizare_comanda') ?>" class="btn btn-globiz d-block"><?= lang('Finalizare comanda') ?></a>
