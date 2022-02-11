@@ -9,7 +9,7 @@ function check_logged(){
 function categorii_top(){
 	$ci =& get_instance();
 	$cat_id = categorie_parinte();
-	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $cat_id, 'afisata' => 1), array('ordine' => 'asc'));
+	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $cat_id, 'afisata' => 1, 'afisare_globiz' => 1), array('ordine' => 'asc'));
 	return $categorii;
 }
 
@@ -17,7 +17,7 @@ function categorie_parinte(){
 	$ci =& get_instance();
 	if(!$ci->session->userdata('categorieParinte'))
 	{
-		$cat = $ci->magazin_db->categorie(array('nume' => 'Globiz - Maniac', 'id_parinte' => 0, 'afisata' => 1));
+		$cat = $ci->magazin_db->categorie(array('nume' => 'Globiz - Maniac', 'id_parinte' => 0, 'afisata' => 1, 'afisare_globiz' => 1));
 		$ci->session->set_userdata('categorieParinte', $cat['id']);
 	}
 	return $ci->session->userdata('categorieParinte');
@@ -35,7 +35,7 @@ function meniu_stanga($id_parinte = 0, $nivel = 0, $show_image = true, $id_sub_m
 {
 	$ci =& get_instance();
 	$meniu = '';
-	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $id_parinte, 'afisata' => 1), array('ordine' => 'asc'));
+	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $id_parinte, 'afisata' => 1, 'afisare_globiz' => 1), array('ordine' => 'asc'));
 	if(is_array($categorii) and count($categorii))
 	{
 		if ($nivel == 0)
@@ -349,9 +349,9 @@ function pret_mic_materom($tert, $produs, $curs=1){
 function categorii_meniu_submeniu(){
 	$ci =& get_instance();
 	$ci->load->model('magazin_db');
-	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $ci->config->item('shop_id'), 'afisata' => 1), array('ordine' => 'asc'));
+	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $ci->config->item('shop_id'), 'afisata' => 1, 'afisare_globiz' => 1), array('ordine' => 'asc'));
 	foreach($categorii as &$categorie){
-		$categorie['submeniu'] = $ci->magazin_db->categorii(array('id_parinte' => $categorie['id'], 'afisata' => 1), array('ordine' => 'asc'));
+		$categorie['submeniu'] = $ci->magazin_db->categorii(array('id_parinte' => $categorie['id'], 'afisata' => 1, 'afisare_globiz' => 1), array('ordine' => 'asc'));
 	}
 	return $categorii;
 }
