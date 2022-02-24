@@ -73,6 +73,7 @@
 							<li><a href="http://www.anpc.gov.ro/" target="_blank"><?= lang('anpc') ?></a></li>
 							<li><a href="<?= site_url('termeni_si_conditii') ?>"><?= lang('termeni_si_conditii') ?></a></li>
 							<li><a href="<?= site_url('gdpr') ?>"><?= lang('gdpr') ?></a></li>
+							<li><a href="<?= site_url('cookie.html') ?>"><?= lang('Politica de confidentialitate si cookies') ?></a></li>
 						</ul>
 					</div>
 				</div>

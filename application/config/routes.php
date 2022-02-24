@@ -79,6 +79,7 @@ $route['termen_de_plata.html'] = "statice/beneficii/termen_de_plata";
 
 $route['clientii_nostrii.html'] = "statice/clientii_nostrii";
 $route['cariera.html'] = "statice/cariera";
+$route['cookie.html'] = "statice/cookie";
 $route['evenimente'] = "statice/evenimente";
 $route['stiri'] = "statice/stiri";
 $route['pareri'] = "statice/pareri";

@@ -1453,5 +1453,16 @@ class Carguard extends MY_Controller
 	function test2(){
 		echo $this->config->item('media_path');
 	}
+
+	function inchide_ms_cookie(){
+        $value = $this->input->post('tip') == 'acord'?1:0;
+        $cookie = array(
+            'name'   => 'globiz_ms_cookie',
+            'value'  => $value,
+            'expire' => time()+108000,
+            'path'   => '/'
+            );
+        $this->input->set_cookie($cookie);
+	}
 	
 }

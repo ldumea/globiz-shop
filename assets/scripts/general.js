@@ -213,6 +213,12 @@ $(document).ready(function() {
 	//}
 });
 
+function inchide_ms_cookie(tip){
+	$.post(site_url+'carguard/inchide_ms_cookie', {'tip': tip}, function(){
+		$(".cookie").remove();
+		$("body").removeClass('afisare-ms-cookie');
+	});
+}
 function add_cart(elem, showWindow){
 	//showWindow = typeof  showWindow !== 'undefined' ? showWindow : true;
 	if(typeof(showWindow)==='undefined') showWindow = true;

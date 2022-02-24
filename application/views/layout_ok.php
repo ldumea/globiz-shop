@@ -117,7 +117,7 @@
 		<div class="rect5"></div>
 	</div>
 
-	<?  if($this->input->cookie('globiz_ms_cookie')!=1): ?>
+	
   <div class="cookie">
         <div class="container">
             <div class="text-center">

@@ -851,3 +851,33 @@ padding: 1px;
     max-height: 250px;
     overflow-y: scroll;
 }
+
+.cookie{
+	position: fixed;
+	bottom: 0;
+	z-index: 1000000000000;
+	width: 100%;
+	background: #333;
+	color: #fff;
+	padding: 6px 0;
+}
+.cookie a{
+  	color: #EE572A;
+}
+.cookie .btn{
+	padding: 7px 20;
+	/*width: 140px;*/
+    color: #EE572A;
+    margin: 0 10px;
+    border-radius: 4px;
+	border: 2px solid #EE572A;
+	background-color: #EE572A;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+.cookie .btn-transparent{
+	background-color: transparent;
+}
+body.afisare-ms-cookie{
+	margin-bottom: 130px;
+}

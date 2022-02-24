@@ -212,4 +212,10 @@ class Statice extends MY_Controller
 		$this->layout['content'] = $this->load->view('statice/'.$this->session->userdata('folderView').'/reabonare', $this->content, true);
 		$this->load->view('layout', $this->layout);
 	}
+
+	function cookie(){
+		$this->layout['current_page'] = 'stiri';
+		$this->layout['content'] = $this->load->view('statice/'.$this->session->userdata('folderView').'/cookie', $this->content, true);
+		$this->load->view('layout', $this->layout);
+	}
 }
