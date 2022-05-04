@@ -26,7 +26,7 @@ class Feed extends MY_Controller
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
 		if(is_array($tert) and count($tert)){
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
-			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
+			$articole = $this->magazin_db->produse(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
 			// echo $this->db->last_query();exit();
 			$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><articole/>');
 			//$xml->addAttribute('')
@@ -139,7 +139,7 @@ class Feed extends MY_Controller
 		if(is_array($tert) and count($tert)){
 			// $sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
-			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
+			$articole = $this->magazin_db->produse(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
 
 			// $articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')));
 			$filename = "globiz.csv";
@@ -239,7 +239,7 @@ class Feed extends MY_Controller
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
 		if(is_array($tert) and count($tert)){
 			$sql = 'cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
-			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
+			$articole = $this->magazin_db->produse(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
 			// $articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id')));
 			$filename = "globiz.csv";
 			header("Content-Type: text/csv; charset=utf-8");
@@ -342,7 +342,7 @@ class Feed extends MY_Controller
 			$num++;
 			
 			//$articole = $this->magazin_db->produse(array('activ' => 1, 'pret_vanzare_tva !='=> 0));
-			$articole = $this->magazin_db->produse_categorie(array('activ' => 1, 'pret_vanzare_tva !='=> 0, 'articole_categorii.categorie_id' => 479, 'magazin_id' => $this->config->item('shop_id')));
+			$articole = $this->magazin_db->produse_categorie(array('activ' => 1, 'tip' => 1, 'pret_vanzare_tva !='=> 0, 'articole_categorii.categorie_id' => 479, 'magazin_id' => $this->config->item('shop_id')));
 			$filename = "globiz.xls";
 			foreach ($articole as $art) {
 				$img = '';
@@ -623,7 +623,7 @@ class Feed extends MY_Controller
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
 		if(is_array($tert) and count($tert)){
 			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
-			$articole = $this->magazin_db->produse(array('activ' => 1, 'magazin_id' => $this->config->item('shop_id'), 'materom_ok'=>1), array(), array(), $sql);
+			$articole = $this->magazin_db->produse(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id'), 'materom_ok'=>1), array(), array(), $sql);
 
 			$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><articole/>');
 			//$xml->addAttribute('')

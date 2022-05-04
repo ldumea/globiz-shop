@@ -20,7 +20,11 @@
 		<? endif ?>
 		</td>
 		<td class="quantity">
-			<input type="number" class="cantitate" onchange="actualizeaza_cos('<?= $id ?>')" name="qty[<?= $id ?>]" data-min="<?= $c['produs']['cantitate'] ?>" data-step="<?= $c['produs']['cantitate'] ?>" id="qty_<?= $id ?>" value="<?= $c['qty'] ?>" <? if(isset($c['options']['tip']) and ($c['options']['tip'] == 'produs_cadou')): ?> readonly<? endif ?>>
+			<?if($c['produs']['tip']==1): ?>
+				<input type="number" class="cantitate" onchange="actualizeaza_cos('<?= $id ?>')" name="qty[<?= $id ?>]" data-min="<?= $c['produs']['cantitate'] ?>" data-step="<?= $c['produs']['cantitate'] ?>" id="qty_<?= $id ?>" value="<?= $c['qty'] ?>" <? if(isset($c['options']['tip']) and ($c['options']['tip'] == 'produs_cadou')): ?> readonly<? endif ?>>
+			<? else: ?>
+				<? $c['qty'] ?>
+			<? endif ?>
 			<? if(!(isset($c['options']['tip']) and ($c['options']['tip'] == 'produs_cadou'))): ?>
 				<a href="javascript:;" class="btn btn-outline-globiz" onclick="stergeProdus('<?= $id ?>')"><i class="fas fa-times"></i></a>
 			<? endif ?>

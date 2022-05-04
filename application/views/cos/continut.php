@@ -28,7 +28,11 @@
 		<? endif ?>
 		</td>
 		<td class="quantity">
-			<input class="cantitate" type="number"  onchange="actualizeaza_cos('<?= $id ?>')" name="qty[<?= $id ?>]" data-min="<?= $c['produs']['cantitate'] ?>"  data-step="<?= $c['produs']['cantitate'] ?>" id="qty_<?= $id ?>" value="<?= $c['qty'] ?>" <? if(isset($c['options']['tip']) and ($c['options']['tip'] == 'produs_cadou')): ?> readonly<? endif ?>>
+			<?if($c['produs']['tip']==1): ?>
+				<input class="cantitate" type="number"  onchange="actualizeaza_cos('<?= $id ?>')" name="qty[<?= $id ?>]" data-min="<?= $c['produs']['cantitate'] ?>"  data-step="<?= $c['produs']['cantitate'] ?>" id="qty_<?= $id ?>" value="<?= $c['qty'] ?>" <? if(isset($c['options']['tip']) and ($c['options']['tip'] == 'produs_cadou')): ?> readonly<? endif ?>>
+			<? else: ?>
+				<?= $c['qty'] ?>
+			<? endif ?>
 		</td>
 		<td>
 			<a href="<?= $c['url'] ?>">

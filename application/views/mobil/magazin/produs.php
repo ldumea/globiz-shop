@@ -191,7 +191,7 @@
 									<div class="cart_form <? if($in_precomanda): ?>precomanda<? endif ?>">
 										<div class="btnGroup mt-3 product-btn d-inline-block">
 											<input type="hidden" name="id" value="<?= $produs['id'] ?>" />
-											<button style="width: 100%; text-align: left;" class="btn btn-cart" onclick="<? if($in_precomanda): ?>add_precomanda(this)<? else: ?>add_cart(this)<? endif ?>" type="button">
+											<button style="width: 100%; text-align: <? if($produs['tip']==1): ?>left<?else:  ?>center<?endif ?>;" class="btn btn-cart" onclick="<? if($in_precomanda): ?>add_precomanda(this)<? else: ?>add_cart(this)<? endif ?>" type="button">
 												<? if($in_precomanda): ?>
 												<?= lang('ANUNȚĂ-MĂ') ?>
 												<? else: ?>
@@ -199,7 +199,11 @@
 												<? endif ?>
 											</button>
 											<div class="input <? if($in_precomanda): ?>dn<? endif ?>">
-												<input class="cantitate" id="quantity_<?= $produs['id'] ?>"  data-min="<?= $produs['cantitate'] ?>"  data-step="<?= $produs['cantitate'] ?>" value="<?= $produs['cantitate'] ?>" title="<?= lang('buc') ?>" type="text" value="0" name="cantitate">
+												<? if($produs['tip']==1): ?>
+													<input class="cantitate" id="quantity_<?= $produs['id'] ?>"  data-min="<?= $produs['cantitate'] ?>"  data-step="<?= $produs['cantitate'] ?>" value="<?= $produs['cantitate'] ?>" title="<?= lang('buc') ?>" type="text" name="cantitate">
+												<? else: ?>
+													<input id="quantity_<?= $produs['id'] ?>" value="<?= $produs['cantitate'] ?>" title="<?= lang('buc') ?>" type="hidden" name="cantitate">
+												<? endif ?>
 											</div>
 										</div>
 									</div>
