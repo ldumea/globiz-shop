@@ -1,3 +1,3 @@
 <?php
-$config['media_path'] = '/home/luci/web/crmglobiz.s1t.eu/public_html/media/';
-$config['media_url'] = 'http://crmglobiz.s1t.eu/media/';
+$config['media_path'] = '/home/luci/web/crm.globiz.g9.ro/public_html/media/';
+$config['media_url'] = 'http://crm.globiz.g9.ro/media/';

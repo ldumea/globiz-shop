@@ -1182,6 +1182,7 @@ class Carguard extends MY_Controller
 		$where = array();
 		$sql = '';
 		$sql_arr = array();
+		// $banner = array();
 		switch ($tip) {
 			case 'promotii':
 				$where = array('activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
@@ -1192,6 +1193,7 @@ class Carguard extends MY_Controller
 				$sql_arr[] = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 				$sql = implode(" AND ", $sql_arr);
 				$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>0), $sql);
+				$banner = $this->magazin_db->banner(array('tip' => 3));
 				break;
 			case 'lichidari':
 				$titlu = lang('lichidari');
@@ -1200,6 +1202,7 @@ class Carguard extends MY_Controller
 				$where_arr = array('articole_categorii.categorie_id' => $id, 'articole.activ' => 1, 'articole.afisare_globiz' => 1);
 				$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 				$produse = $this->magazin_db->produse_categorie($where_arr, array('ordine' => 'asc', 'produs_precomandabil' => 'asc', 'articole.cod' => 'asc'), array('per_page'=> $this->per_page, 'no'=>0), $sql);
+				$banner = $this->magazin_db->banner(array('tip' => 1));
 				break;
 			default:
 				$where = array('nou' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
@@ -1208,6 +1211,7 @@ class Carguard extends MY_Controller
 				$sql_arr[] = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1))';
 				$sql = implode(" AND ", $sql_arr);
 				$produse = $this->magazin_db->produse($where, $ordine, array('per_page'=> $this->per_page, 'no'=>0), $sql);
+				$banner = $this->magazin_db->banner(array('tip' => 2));
 				break;
 		}
 		//$where['articole.stoc > '] = 0;
@@ -1248,6 +1252,7 @@ class Carguard extends MY_Controller
 		
 		$this->content['pagina'] = 1;
 		$this->content['tip'] = $tip;
+		$this->content['banner'] = $banner;
 
 		$this->layout['current_page'] = 'produse_oferta';
 		$this->layout['javascript'][] = base_url().'assets/plugins/infinite-scroll.min.js';
@@ -1452,6 +1457,10 @@ class Carguard extends MY_Controller
 	}
 	function test2(){
 		echo $this->config->item('media_path');
+	}
+	function test3(){
+		echo '<pre>';
+		print_r(categorii_top_new());
 	}
 
 	function inchide_ms_cookie(){

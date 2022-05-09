@@ -881,3 +881,19 @@ padding: 1px;
 body.afisare-ms-cookie{
 	margin-bottom: 130px;
 }
+/*.subcategorii_top .subcat{
+	width: 33%;
+	float: left;
+}
+.subcategorii_top .subcat:nth-child(4n+4){
+	clear: both;
+}
+.subcategorii_top{
+	width: 99%;
+	position: absolute;
+	background: #fff;
+	display: none;
+}
+.top_meniu_categ:hover .subcategorii_top{
+	display: block;
+}*/

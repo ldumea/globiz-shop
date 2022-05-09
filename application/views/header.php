@@ -119,7 +119,7 @@
 				</ul>
 				<? else: ?>
 					<div class="mr-auto nav-page">
-						<? foreach(categorii_top() as $c): ?>
+						<? foreach(categorii_top_new() as $c): ?>
 							<?
 							$_arr = explode(".", $c['imagine']);
 							$ext = ".".end($_arr);
@@ -130,10 +130,33 @@
 								$img = $c['imagine'];
 							}
 							?>
-							<span>
+							<span class="top_meniu_categ">
 								<a href="<?= categorie_url($c) ?>" class="d-inline-block ml-3">
 									<img src="<?= base_url() ?>assets/images/meniu_pagini/<?= $folder ?><?= $img ?>"  data-image-second="<?= base_url() ?>assets/images/meniu_pagini/<?= $folder ?><?= $img_o ?>"/>
-								</a>    
+								</a>
+								<? /*if(is_array($c['subcategorii']) and count($c['subcategorii'])): ?>
+									<div class="subcategorii_top ml-3">
+										<? foreach($c['subcategorii'] as $cat): ?>
+											<div class="subcat">
+												<div>
+													<a href="<?= categorie_url($cat) ?>">
+														<?= $cat['nume'.$this->session->userdata('fieldLang')]!=''?$cat['nume'.$this->session->userdata('fieldLang')]:$cat['nume'] ?>
+													</a>
+												</div>
+												<? if(is_array($cat['subcategorii']) and count($cat['subcategorii'])): ?>
+													<? foreach($cat['subcategorii'] as $subcat): ?>
+														<div>
+															<a href="<?= categorie_url($subcat) ?>">
+																<?= $subcat['nume'.$this->session->userdata('fieldLang')]!=''?$subcat['nume'.$this->session->userdata('fieldLang')]:$subcat['nume'] ?>
+															</a>
+														</div>
+													<? endforeach ?>
+												<? endif ?>
+											</div>
+										<? endforeach ?>
+									</div>
+								<? endif */ ?>
+
 							</span>
 						<? endforeach ?>
 					</div>

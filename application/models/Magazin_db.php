@@ -24,6 +24,13 @@ class Magazin_db extends CI_Model
 		$this->db->where($rec);
 		return $this->db->get('cataloage')->row_array();
 	}
+	function banner($rec, $sql = ''){
+		if($sql != '') {
+			$this->db->where($sql);
+		}
+		$this->db->where($rec);
+		return $this->db->get('bannere')->row_array();
+	}
 	function categorii($rec = array(), $order = array(), $limits = array(), $sql = '')
 	{
 		$this->db->where($rec);

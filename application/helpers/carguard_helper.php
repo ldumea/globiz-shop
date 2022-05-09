@@ -12,6 +12,18 @@ function categorii_top(){
 	$categorii = $ci->magazin_db->categorii(array('id_parinte' => $cat_id, 'afisata' => 1, 'afisare_globiz' => 1), array('ordine' => 'asc'));
 	return $categorii;
 }
+function categorii_top_new($parinte_id = 0, $nivel = 0, $nivel_max = 4){
+	if($nivel<$nivel_max){
+		$ci =& get_instance();
+		$parinte_id = ($parinte_id==0)?categorie_parinte():$parinte_id;
+		$categorii = $ci->magazin_db->categorii(array('id_parinte' => $parinte_id, 'afisata' => 1, 'afisare_globiz' => 1), array('ordine' => 'asc'));
+		foreach($categorii as &$categorie){
+			$categorie['subcategorii'] = categorii_top_new($categorie['id'], $nivel+1, $nivel_max);
+		}
+		return $categorii;
+	}
+
+}
 
 function categorie_parinte(){
 	$ci =& get_instance();
