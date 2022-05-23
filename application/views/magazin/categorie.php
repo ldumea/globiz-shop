@@ -40,7 +40,7 @@
 				<? if($categorie['imagine_globiz']!=''): ?>
 					<div class="row products">
 						<div class="media col-md-12">
-							 <img width="870" height="350" class="p-b-10 img-responsive" alt="<?= $categorie['nume'.$this->session->userdata('fieldLang')] ?>" src="<?= $this->config->item('media_url').'categorii/'.$categorie['imagine_globiz'] ?>">
+							 <img class="p-b-10 img-fluid" alt="<?= $categorie['nume'.$this->session->userdata('fieldLang')] ?>" src="<?= $this->config->item('media_url').'categorii/'.$categorie['imagine_globiz'] ?>">
 						</div>
 					</div>
 				<? endif ?>
