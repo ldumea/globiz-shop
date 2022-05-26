@@ -22,113 +22,217 @@ class Feed extends MY_Controller
 		$this->load->helper('xml');
 		$id = $this->uri->segment(3);
 		$feed_hash = $this->uri->segment(4);
+		$cod = trim($this->input->get('cod'));
 
 		$tert = $this->utilizator_db->tert(array('id' => $id, 'feed_hash' => $feed_hash));
 		if(is_array($tert) and count($tert)){
-			$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
-			$articole = $this->magazin_db->produse(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
-			// echo $this->db->last_query();exit();
-			$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><articole/>');
-			//$xml->addAttribute('')
-			foreach ($articole as $key => $art) {
-				$img = '';
-				$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				if(is_array($imagine) and count($imagine))
-					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+			if($cod==''){
+				$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
+				$articole = $this->magazin_db->produse(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id')), array(), array(), $sql);
+				// echo $this->db->last_query();exit();
+				$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><articole/>');
+				//$xml->addAttribute('')
+				foreach ($articole as $key => $art) {
+					$img = '';
+					$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
+					if(is_array($imagine) and count($imagine))
+						$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+						
+					$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $art['id']), array('ordine' => 'asc'));
 					
-				$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				
-				//$img = '';
-				//$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
-				//if(count($imagine))
-				//	$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
-				$categorii = $this->magazin_db->produs_categorii(array('articol_id' => $art['id']));
-				$categorie = '';
-				$path = array();
-				foreach ($categorii as $c){
-					$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
-					if(is_array($cat) and count($cat)){
-						if(count(explode("-", $cat['path'])) >= count($path)){
-							$path = explode("-", $cat['path']);
-							$path[] = $c['categorie_id'];
+					//$img = '';
+					//$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
+					//if(count($imagine))
+					//	$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+					$categorii = $this->magazin_db->produs_categorii(array('articol_id' => $art['id']));
+					$categorie = '';
+					$path = array();
+					foreach ($categorii as $c){
+						$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
+						if(is_array($cat) and count($cat)){
+							if(count(explode("-", $cat['path'])) >= count($path)){
+								$path = explode("-", $cat['path']);
+								$path[] = $c['categorie_id'];
+							}
+							if($categorie =='')
+								$categorie = $cat['nume'];
 						}
-						if($categorie =='')
-							$categorie = $cat['nume'];
 					}
-				}
-				
-				$pathStr = '';
-				$pathArr = array();
-				foreach ($path as $p) {
-					$cat = $this->magazin_db->categorie(array('id' => $p));
-					if(is_array($cat) and count($cat)){
-						if($cat['nume']=='Globiz')
-							$pathArr[] = 'Home';
-						else
-							$pathArr[] = $cat['nume'];
+					
+					$pathStr = '';
+					$pathArr = array();
+					foreach ($path as $p) {
+						$cat = $this->magazin_db->categorie(array('id' => $p));
+						if(is_array($cat) and count($cat)){
+							if($cat['nume']=='Globiz')
+								$pathArr[] = 'Home';
+							else
+								$pathArr[] = $cat['nume'];
+						}
 					}
-				}
-				$pathStr = implode(" / ", $pathArr);
-				
-				$descriere = $art['descriere'];
-				$descriere = convert_accented_characters($descriere);
-				$descriere = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $descriere);
-				$descriere = html_entity_decode($descriere, ENT_COMPAT, 'UTF-8');
-				$descriere = xml_convert($descriere);
+					$pathStr = implode(" / ", $pathArr);
+					
+					$descriere = $art['descriere'];
+					$descriere = convert_accented_characters($descriere);
+					$descriere = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $descriere);
+					$descriere = html_entity_decode($descriere, ENT_COMPAT, 'UTF-8');
+					$descriere = xml_convert($descriere);
 
-				//$descriere = str_replace($this->config->item('LATIN1_CHARS'), $this->config->item('LATIN2_CHARS'), $descriere);
-				//$descriere = htmlspecialchars($descriere, ENT_QUOTES | ENT_XML1, 'UTF-8');
-				//$descriere = htmlentities($descriere,ENT_COMPAT, 'UTF-8');
-				
-				$marca = $this->magazin_db->marca(array('id' => $art['marca_id']));
-				$marca_text = isset($marca['marca'])?$marca['marca']:'';
-				$denumire = $art['denumire'];
-				$denumire = xml_convert($denumire);
-				//$denumire = htmlentities($denumire,ENT_COMPAT, 'UTF-8');
-				$pret = number_format($art['pret_vanzare'], 2);
-				$pret_intreg = $pret;
-				if ($art['pret_intreg'] > 0 && $art['pret_intreg'] != '' && $art['pret_vanzare'] < $art['pret_intreg']) {
-					$pret_intreg = number_format($art['pret_intreg'],2);
-				}
+					//$descriere = str_replace($this->config->item('LATIN1_CHARS'), $this->config->item('LATIN2_CHARS'), $descriere);
+					//$descriere = htmlspecialchars($descriere, ENT_QUOTES | ENT_XML1, 'UTF-8');
+					//$descriere = htmlentities($descriere,ENT_COMPAT, 'UTF-8');
+					
+					$marca = $this->magazin_db->marca(array('id' => $art['marca_id']));
+					$marca_text = isset($marca['marca'])?$marca['marca']:'';
+					$denumire = $art['denumire'];
+					$denumire = xml_convert($denumire);
+					//$denumire = htmlentities($denumire,ENT_COMPAT, 'UTF-8');
+					$pret = number_format($art['pret_vanzare'], 2);
+					$pret_intreg = $pret;
+					if ($art['pret_intreg'] > 0 && $art['pret_intreg'] != '' && $art['pret_vanzare'] < $art['pret_intreg']) {
+						$pret_intreg = number_format($art['pret_intreg'],2);
+					}
 
-				
-				
-				$track = $xml->addChild('articol');
-				$track->addChild('cod', $art['cod']);
-				$track->addChild('denumire', $denumire);
-				$track->addChild('descriere', $descriere);
-				$track->addChild('pret', $pret);
-				$track->addChild('imagine', $img);
-				$track->addChild('marca', $marca_text);
-				$track->addChild('cod_bare', $art['cod_bare']);
-				$imagini_xml = $track->addChild('imagini');
-				foreach($imagini as $imagine){
-					$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
-					$imagini_xml->addChild('imagine', $img);
+					
+					
+					$track = $xml->addChild('articol');
+					$track->addChild('cod', $art['cod']);
+					$track->addChild('denumire', $denumire);
+					$track->addChild('descriere', $descriere);
+					$track->addChild('pret', $pret);
+					$track->addChild('imagine', $img);
+					$track->addChild('marca', $marca_text);
+					$track->addChild('cod_bare', $art['cod_bare']);
+					$imagini_xml = $track->addChild('imagini');
+					foreach($imagini as $imagine){
+						$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+						$imagini_xml->addChild('imagine', $img);
+					}
+					$track->addChild('categorie', xml_convert($categorie));
+					$track->addChild('caleCategorie', xml_convert($pathStr));
+					$track->addChild('unitate_amabalare', $art['cantitate']);
+					$track->addChild('um', $art['um']);
+					if( ($art['stoc']==0) and ($art['stoc_furnizor']<15) and ($art['pret_furnizor']<2000)){
+						$text = 'PRECOMANDA';
+					} elseif( ($art['stoc']==0) and ($art['stoc_furnizor']==0) and ($art['furnizor_id']==1)){
+						$text = 'PRECOMANDA';
+					} elseif(($art['stoc']+$art['stoc_furnizor']==0) and ($art['precomanda']==1)) {
+						$text = 'PRECOMANDA';
+					} elseif($art['stoc']+$art['stoc_furnizor']<30){
+						$text = 'STOC LIMITAT';
+					} else{
+						$text = 'IN STOC';
+					}
+					$track->addChild('stoc', $text);
+					$track->addChild('pret_intreg', $pret_intreg);
+					//if($key == 10) break;
 				}
-				$track->addChild('categorie', xml_convert($categorie));
-				$track->addChild('caleCategorie', xml_convert($pathStr));
-				$track->addChild('unitate_amabalare', $art['cantitate']);
-				$track->addChild('um', $art['um']);
-				if( ($art['stoc']==0) and ($art['stoc_furnizor']<15) and ($art['pret_furnizor']<2000)){
-					$text = 'PRECOMANDA';
-				} elseif( ($art['stoc']==0) and ($art['stoc_furnizor']==0) and ($art['furnizor_id']==1)){
-					$text = 'PRECOMANDA';
-				} elseif(($art['stoc']+$art['stoc_furnizor']==0) and ($art['precomanda']==1)) {
-					$text = 'PRECOMANDA';
-				} elseif($art['stoc']+$art['stoc_furnizor']<30){
-					$text = 'STOC LIMITAT';
-				} else{
-					$text = 'IN STOC';
+				//Header('Content-type: text/xml');
+				header("Content-Type: text/xml; charset=utf-8");
+				print($xml->asXML());
+			} else {
+				// echo 'aici';
+				// $articol = $this->
+				$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor > 0 ) OR (articole.furnizor_id = 1) OR (articole.precomanda = 1)) AND cod NOT IN ('.implode(",", $this->coduri_eliminate).')';
+				$art = $this->magazin_db->produs(array('activ' => 1, 'tip' => 1, 'magazin_id' => $this->config->item('shop_id'), 'cod' => $cod), $sql);
+				$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><articol/>');
+				if($art){
+					$img = '';
+					$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
+					if(is_array($imagine) and count($imagine))
+						$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+						
+					$imagini = $this->magazin_db->produse_imagini(array('articol_id' => $art['id']), array('ordine' => 'asc'));
+					
+					//$img = '';
+					//$imagine = $this->magazin_db->produse_imagine(array('articol_id' => $art['id']), array('ordine' => 'asc'));
+					//if(count($imagine))
+					//	$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+					$categorii = $this->magazin_db->produs_categorii(array('articol_id' => $art['id']));
+					$categorie = '';
+					$path = array();
+					foreach ($categorii as $c){
+						$cat = $this->magazin_db->categorie(array('id' => $c['categorie_id']));
+						if(is_array($cat) and count($cat)){
+							if(count(explode("-", $cat['path'])) >= count($path)){
+								$path = explode("-", $cat['path']);
+								$path[] = $c['categorie_id'];
+							}
+							if($categorie =='')
+								$categorie = $cat['nume'];
+						}
+					}
+					
+					$pathStr = '';
+					$pathArr = array();
+					foreach ($path as $p) {
+						$cat = $this->magazin_db->categorie(array('id' => $p));
+						if(is_array($cat) and count($cat)){
+							if($cat['nume']=='Globiz')
+								$pathArr[] = 'Home';
+							else
+								$pathArr[] = $cat['nume'];
+						}
+					}
+					$pathStr = implode(" / ", $pathArr);
+					
+					$descriere = $art['descriere'];
+					$descriere = convert_accented_characters($descriere);
+					$descriere = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $descriere);
+					$descriere = html_entity_decode($descriere, ENT_COMPAT, 'UTF-8');
+					$descriere = xml_convert($descriere);
+
+					//$descriere = str_replace($this->config->item('LATIN1_CHARS'), $this->config->item('LATIN2_CHARS'), $descriere);
+					//$descriere = htmlspecialchars($descriere, ENT_QUOTES | ENT_XML1, 'UTF-8');
+					//$descriere = htmlentities($descriere,ENT_COMPAT, 'UTF-8');
+					
+					$marca = $this->magazin_db->marca(array('id' => $art['marca_id']));
+					$marca_text = isset($marca['marca'])?$marca['marca']:'';
+					$denumire = $art['denumire'];
+					$denumire = xml_convert($denumire);
+					//$denumire = htmlentities($denumire,ENT_COMPAT, 'UTF-8');
+					$pret = number_format($art['pret_vanzare'], 2);
+					$pret_intreg = $pret;
+					if ($art['pret_intreg'] > 0 && $art['pret_intreg'] != '' && $art['pret_vanzare'] < $art['pret_intreg']) {
+						$pret_intreg = number_format($art['pret_intreg'],2);
+					}
+
+					
+					
+					// $track = $xml->addChild('articol');
+					$xml->addChild('cod', $art['cod']);
+					$xml->addChild('denumire', $denumire);
+					$xml->addChild('descriere', $descriere);
+					$xml->addChild('pret', $pret);
+					$xml->addChild('imagine', $img);
+					$xml->addChild('marca', $marca_text);
+					$xml->addChild('cod_bare', $art['cod_bare']);
+					$imagini_xml = $xml->addChild('imagini');
+					foreach($imagini as $imagine){
+						$img = $this->config->item('media_url').'articole/'.$imagine['imagine'];
+						$imagini_xml->addChild('imagine', $img);
+					}
+					$xml->addChild('categorie', xml_convert($categorie));
+					$xml->addChild('caleCategorie', xml_convert($pathStr));
+					$xml->addChild('unitate_amabalare', $art['cantitate']);
+					$xml->addChild('um', $art['um']);
+					if( ($art['stoc']==0) and ($art['stoc_furnizor']<15) and ($art['pret_furnizor']<2000)){
+						$text = 'PRECOMANDA';
+					} elseif( ($art['stoc']==0) and ($art['stoc_furnizor']==0) and ($art['furnizor_id']==1)){
+						$text = 'PRECOMANDA';
+					} elseif(($art['stoc']+$art['stoc_furnizor']==0) and ($art['precomanda']==1)) {
+						$text = 'PRECOMANDA';
+					} elseif($art['stoc']+$art['stoc_furnizor']<30){
+						$text = 'STOC LIMITAT';
+					} else{
+						$text = 'IN STOC';
+					}
+					$xml->addChild('stoc', $text);
+					$xml->addChild('pret_intreg', $pret_intreg);
 				}
-				$track->addChild('stoc', $text);
-				$track->addChild('pret_intreg', $pret_intreg);
-				//if($key == 10) break;
+				header("Content-Type: text/xml; charset=utf-8");
+				print($xml->asXML());
 			}
-			//Header('Content-type: text/xml');
-			header("Content-Type: text/xml; charset=utf-8");
-			print($xml->asXML());
-
 		}else redirect(site_url());
 	}
 	function csv(){

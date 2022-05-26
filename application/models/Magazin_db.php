@@ -107,9 +107,12 @@ class Magazin_db extends CI_Model
 		$this->db->select('articole.*');
 		return $this->db->get('articole')->num_rows();
 	}
-	function produs($rec = array())
+	function produs($rec = array(), $sql = "")
 	{
 		$this->db->where($rec);
+		if($sql != '') {
+			$this->db->where($sql);
+		}
 		return $this->db->get('articole')->row_array();
 	}
 	function resigilat($rec = array())
