@@ -17,7 +17,9 @@
 								<div class="media">
 									<div class="media-body">
 										<strong>XML:</strong><br>
-										<?= site_url('feed/xml/'.$this->session->userdata('tert_id').'/'.$tert['feed_hash']) ?>
+										<?= site_url('feed/xml/'.$this->session->userdata('tert_id').'/'.$tert['feed_hash']) ?><br>
+										<strong>XML articol:</strong><br>
+										<?= site_url('feed/xml/'.$this->session->userdata('tert_id').'/'.$tert['feed_hash'].'?cod='.$articol['cod']) ?>
 									</div>
 								</div>
 								<div class="media">

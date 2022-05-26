@@ -1092,7 +1092,11 @@ class Utilizator extends MY_Controller
 	/****************/
 	function feeduri(){
 		check_logged();
+		$where = array('promo' => '1', 'activ' => 1, 'afisare_globiz' => 1, 'magazin_id' => $this->config->item('shop_id'));
+		$sql = '((articole.stoc > 0) OR (articole.stoc_furnizor >0 ))';
+		$articol = $this->magazin_db->produs($where, $sql);
 		$this->content['tert'] = $this->utilizator_db->tert(array('id' => $this->session->userdata('tert_id')));
+		$this->content['articol'] = $articol;
 		$this->layout['content'] = $this->load->view('utilizator/feeduri', $this->content, true);
 		$this->load->view('layout', $this->layout);
 	}
